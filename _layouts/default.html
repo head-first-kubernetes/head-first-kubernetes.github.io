@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>{{ page.title }}</title>
+		<title>{{ site.title }}</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/skeleton.css" />
 		<style>
 			html {
-				  font-size: 100%;
+				  font-size: 80%;
 			}
 			code {
 				overflow: scroll;
@@ -18,15 +18,45 @@
 				margin-left: auto;
   				margin-right: auto;
 			}
+			div.sticky {
+				position: -webkit-sticky;
+				position: sticky;
+				top: 0;
+			}
+			section.header {
+				padding-top: 10%;
+				padding-bottom: 10%;
+			}
 		</style>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.css">
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
 		{% seo %}
 	</head>
 	<body>
 		<div class="container">
-			{{ content }}
+			<section class="header">
+				<h1 class="title">{{ site.title }}</h1>
+				<h4>{{ site.description }}</h2>
+			</section>
+			<div class="row">
+				<div class="one-third column toc sticky"></div>
+				<div class="two-thirds column">{{ content }}</div>
+			</div>
 		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
 		<script>hljs.initHighlightingOnLoad();</script>
+		<script>
+			tocbot.init({
+			// Where to render the table of contents.
+			tocSelector: 'div.toc',
+			// Where to grab the headings to build the table of contents.
+			contentSelector: 'div.home',
+			// Which headings to grab inside of the contentSelector element.
+			headingSelector: 'h1, h2, h3',
+			// For headings inside relative or absolute positioned containers within content.
+			hasInnerContainers: true,
+			});
+		</script>
 	</body>
 </html>

@@ -1,6 +1,5 @@
 ---
-title: Head-first Kubernetes
-description: A Kubernetes tutorial for complete beginners.
+title: ""
 ---
 
 ## Hello Docker World

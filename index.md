@@ -56,7 +56,7 @@ Firstly, we need to install flask. In Python, this is done using pip - which is 
 
 We can totally install Flask using pip and get on with the rest of it but that would mean Flask would end up in our global Python packages space.
 
-```bash
+```console
 $ pip install flask
 ...
 
@@ -79,13 +79,13 @@ Did I tell you that we will be using Python 3 in this book? Let me use this oppo
 
 So firstly, lets create a virtual environment for our little Hello World project. You can do it like so:
 
-```bash
+```console
 $ python -m venv ~/<path-to-the-virtual-environment>
 ```
 
 I usually go with:
 
-```bash
+```console
 $ python -m venv ~/.venv/k8s
 ```
 
@@ -93,7 +93,7 @@ P.S. You can run many modules in Python by using the -m flag. I will come back t
 
 A virtual environment is nothing but a copy of all the files that are needed to run Python applications. You can see for yourself:
 
-```bash
+```console
 $ ls ~/.venv/k8s
 drwxr-xr-x   6 alixedi  staff   192B Jul 31 13:01 .
 drwxr-xr-x  36 alixedi  staff   1.1K Jul 31 13:01 ..
@@ -105,7 +105,7 @@ drwxr-xr-x   3 alixedi  staff    96B Jul 31 13:01 lib
 
 Or more interestingly:
 
-```bash
+```console
 $ ls ~/.venv/k8s/bin
 -rw-r--r--  1 alixedi  staff  2244 Jul 31 13:01 activate
 -rw-r--r--  1 alixedi  staff  1300 Jul 31 13:01 activate.csh
@@ -170,7 +170,7 @@ SyntaxError: invalid syntax
 
 One final check. Installing flask in a venv would mean that its is not available globally:
 
-```bash
+```console
 (k8s) $ deactivate
 
 $ which python
@@ -190,7 +190,7 @@ Onwards. Flask. Web application.
 
 We wrote ourselves an exciting little application in Flask. We should totally run it. Here is how:
 
-```bash
+```console
 (k8s) $ FLASK_APP=hello.py flask run
 * Serving Flask app "hello.py"
  * Environment: production
@@ -231,7 +231,7 @@ We can do this in 2 easy steps.
 
 In the first step, we will capture the dependencies required by our web application.
 
-```bash
+```console
 (k8s) $ pip freeze
 click==7.1.2
 Flask==1.1.2
@@ -246,7 +246,7 @@ This gives us a list of all the dependencies and their correct versions that are
 
 Lets put these in a file like so:
 
-```bash
+```console
 (k8s) $ pip freeze > requirements.txt
 ```
 
@@ -270,7 +270,7 @@ $ # Run that thing!
 $ FLASK_APP=hello.py flask run
 ```
 
-You can put these steps in a bash script and it would work beautifully. More or less. Until it doesn't.
+You can put these steps in a console script and it would work beautifully. More or less. Until it doesn't.
 
 Time to talk about containers.
 
@@ -288,7 +288,7 @@ drwxr-xr-x   3 alixedi  staff    96B Jul 31 13:01 lib
 
 It is a directory containing all the Python dependencies that are needed to run a Python application. This includes the python binary, pip etc.
 
-```bash
+```console
 $ ls -l ~/.venv/k8s/bin
 total 72
 -rw-r--r--  1 alixedi  staff  2244 Jul 31 13:01 activate
@@ -300,7 +300,7 @@ lrwxr-xr-x  1 alixedi  staff     7 Jul 31 13:01 python -> python3
 
 It also includes the packages that are needed by our application e.g. Flask:
 
-```bash
+```console
 $ ls -a ~/.local/share/virtualenvs/head-1st-k8s/lib/python3.7/site-packages
 drwxr-xr-x  21 alixedi  staff   672B Jul 31 13:09 .
 drwxr-xr-x   3 alixedi  staff    96B Jul 31 13:01 ..
@@ -324,7 +324,7 @@ But we are still in a half-way house here.
 
 You see the copy of the python binary we spotted in the bin folder in our virtual environment still needs a bunch of operating system libraries to run. If you are running a Linux machine, you can observe this like so:
 
-```bash
+```console
 (k8s) $ strace -s 2000 -o strace.log python
 Python 3.7.4 (default, Oct 12 2019, 18:55:28)
 [Clang 11.0.0 (clang-1100.0.33.8)] on darwin
@@ -393,13 +393,13 @@ Hang on a minute, we are moving straight to requirements.txt
 
 What happened to being able to create a virtual environment by running:
 
-```bash
+```console
 $ python -m venv ~/.venvs/k8s
 ```
 
 Followed by activating the virtual environment and installing a bunch of packages by:
 
-```bash
+```console
 $ source ~/.venv/k8s/bin/activate
 (k8s) $ pip install flask
 ```
@@ -431,7 +431,7 @@ How do you build a docker image?
 
 Simple. Like so:
 
-```bash
+```console
 $ docker build .
 
 Sending build context to Docker daemon  5.632kB
@@ -485,7 +485,7 @@ An attentive reader would notice that the steps correspond to the lines in the D
 
 Back to the image. We just built one. Where is it though?
 
-```bash
+```console
 $ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 <none>              <none>              1ddb10e93851        4 minutes ago       53.4MB
@@ -500,7 +500,7 @@ But what about MY image? It doesn't seem to have a REPOSITORY (seems like a name
 
 Lets answer these questions by running the following bit of command-line:
 
-```bash
+```console
 $ docker image tag 1ddb10e93851 hello:v1
 $ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
@@ -512,7 +512,7 @@ Much better.
 
 Except next time, we could bundle up the naming and tagging in the build command itself:
 
-```bash
+```console
 $ docker build . --tag hello:v1
 ```
 
@@ -546,7 +546,7 @@ Go make an account at Dockerhub. While you are at it, also create a new reposito
 
 Done? Cool. We can now do the following:
 
-```bash
+```console
 $ docker image tag hello:v1 <dockerhub-username>/hello:v1
 $ docker push alixedi/hello:v1
 The push refers to repository [docker.io/alixedi/hello]
@@ -563,7 +563,7 @@ This will push the hello:v1 image to dockerhub.
 
 The CI script that deploys your application to production could then do the following:
 
-```bash
+```console
 $ docker pull alixedi/hello:v1
 ```
 
@@ -583,7 +583,7 @@ One more thing: All the commands produce layers but except for FROM, COPY and RU
 
 Finally, how can I inspect these layers? Lets do that now. Break the COPY statement in your Dockerfile:
 
-```bash
+```console
 FROM python:alpine
 COPY hello.py /
 COPY requirements.txt /
@@ -592,13 +592,13 @@ RUN pip install -r requirements.txt
 
 Build a new version of the image:
 
-```bash
+```console
 $ docker build . hello:v2
 ```
 
 In order to inspect the layers:
 
-```bash
+```console
 $ docker history hello:v2
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
 5433ece6bdd7        9 minutes ago       /bin/sh -c pip install -r requirements.txt      10.8MB
@@ -611,7 +611,7 @@ a320b983dea1        9 minutes ago       /bin/sh -c #(nop) COPY file:11d578baaa9f
 
 And compare the layers with those of hello:v1
 
-```bash
+```console
 $ colordiff <(docker history hello:v1) <(docker history hello:v2)
 2,3c2,4
 < 1ddb10e93851        3 hours ago         /bin/sh -c pip install -r requirements.txt      10.8MB
@@ -630,19 +630,19 @@ Time to run that fucking image.
 
 First thing you could do is to run your container with a shell and faff about:
 
-```bash
+```console
 $ docker run --interactive --tty hello:v1 sh
 ```
 
 I would also invite you at this point to summon the help and find out what —interactive and —tty means:
 
-```bash
+```console
 $ docker run --help
 ```
 
 Nice innit? You would be delighted to find out that this help is not limited to docker run.
 
-```bash
+```console
 $ docker --help
 $ doker build --help
 $ docker image --help
@@ -654,7 +654,7 @@ zsh: command not found: etc.
 
 Back to docker run. Lets try and faff about as promised:
 
-```bash
+```console
 $ docker run -it hello:v1 sh
 # ls -l -Sr
 total 68
@@ -667,7 +667,7 @@ dr-xr-xr-x  144 root     root             0 Aug  7 13:16 proc
 
 I see them files and I cannot resist:
 
-```bash
+```console
 # FLASK_APP=hello.py flask run &
  * Serving Flask app "hello.py"
  * Environment: production
@@ -690,7 +690,7 @@ There it is 😅
 
 Now we just want to lift up whatever we did in that container to get our little app running. Here is a decent first go:
 
-```bash
+```console
 $ docker run hello:v1 sh -c "FLASK_APP=hello.py flask run"
  * Serving Flask app "hello.py"
  * Environment: production
@@ -702,7 +702,7 @@ $ docker run hello:v1 sh -c "FLASK_APP=hello.py flask run"
 
 Now wouldn't it be fun if we can get that beautiful Hello World back? I am one for trying:
 
-```bash
+```console
 $ curl localhost:5000
 curl: (7) Failed to connect to localhost port 5000: Connection refused
 ```
@@ -714,7 +714,7 @@ There are 2 bits missing here I suspect:
 
 Lets see if you can find out how to map ports from the host to the container?
 
-```bash
+```console
 $ docker run --help | grep port
       --expose list                    Expose a port or a range of ports
       --health-retries int             Consecutive failures needed to report unhealthy
@@ -724,13 +724,13 @@ $ docker run --help | grep port
 
 Looks promising. Lets try the publish bit:
 
-```bash
+```console
 $ docker run -p 5000:5000 hello:v1 sh -c "FLASK_APP=hello.py flask run -h 0.0.0.0"
 ```
 
 Moment of truth 🤞
 
-```bash
+```console
 $ curl localhost:5000
 Hello World!
 ```
@@ -741,7 +741,7 @@ Now then 🚀
 
 I am taking it as a win but lets be honest. This is a bit of a mouthful:
 
-```bash
+```console
 $ docker run -p 5000:5000 hello:v1 sh -c "FLASK_APP=hello.py flask run -h 0.0.0.0"
 ```
 
@@ -753,7 +753,7 @@ For starters, you could set environment variables. In addition, you could also s
 
 Here is how:
 
-```bash
+```console
 FROM python:alpine
 COPY hello.py requirements.txt /
 RUN pip install -r requirements.txt
@@ -763,14 +763,14 @@ CMD ["flask", "run", "-h", "0.0.0.0"]
 
 Lets build and run this baby:
 
-```bash
+```console
 $ docker build . hello:v3
 $ docker run -p 5000:5000 hello:v3
 ```
 
 And:
 
-```bash
+```console
 $ curl localhost:5000
 Hello World!
 ```
@@ -985,19 +985,19 @@ Installing Minikube is about following [this excellent guide](https://minikube.s
 
 I went with:
 
-```bash
+```console
 $ brew install minikube
 ```
 
 Following this, it might be prudent to point your docker cli to the docker daemon that is running inside the VM. Instead of the one that is running on your machine, outside the VM.
 
-```bash
+```console
 $ eval $(minikube -p minikube docker-env)
 ```
 
 Finally, some of the stuff we are about to do would be less of a mouthful if you can do the following:
 
-```bash
+```console
 $ alias minikube kubectl --=kubectl
 ```
 
@@ -1011,7 +1011,7 @@ In keeping with this principle, we would like to fiddle with Kubernetes. kubectl
 
 For starters, we should just type kubectl in our terminal and see what that does:
 
-```bash
+```console
 $ kubectl
 kubectl controls the Kubernetes cluster manager.
 
@@ -1026,7 +1026,7 @@ Basic Commands (Beginner):
 
 Lots of interesting things under the ellipses but honestly, do we really feel like reading beyond **run**?
 
-```bash
+```console
 $ kubectl run
 Error: required flag(s) "image" not set
 
@@ -1044,7 +1044,7 @@ In the last chapter, we learned how to build an image. I would propose that you 
 
 We are about to feed that image into kubectl:
 
-```bash
+```console
 $ kubectl run webconsole --image pyconuk-2018-k8s:step2
 deployment.apps/webconsole created
 
@@ -1060,7 +1060,7 @@ It also seems that this *something* is called deployment.apps/webconsole.
 
 It may be interesting to step back to kubectl and find out if it would help us explore the size and shape of what we have just done here.
 
-```bash
+```console
 $ kubectl
 kubectl controls the Kubernetes cluster manager.
 
@@ -1082,7 +1082,7 @@ The second block of Basic Commands sounds promising but more importantly, **Inte
 
 Explain seems to suggest documentation of some kind. Lets ask it about deployments shall we?
 
-```bash
+```console
 $ kubectl explain deployment
 KIND:     Deployment
 VERSION:  apps/v1
@@ -1101,7 +1101,7 @@ Deployments in the Kubernetes universe is the layer that runs multiple replicas 
 
 With that out of the way, the output of our kubectl explain deployment mentions 2 other things: Pods and ReplicaSets. Lets see if kubectl does a better job of explaining that these are:
 
-```bash
+```console
 $ kubectl explain pods
 KIND:     Pod
 VERSION:  v1
@@ -1119,7 +1119,7 @@ Often, an instance of application comprises of 2 or more containers. For instanc
 
 Lets look at ReplicaSet:
 
-```bash
+```console
 $ kubectl explain ReplicaSet
 KIND:     ReplicaSet
 VERSION:  apps/v1
@@ -1135,7 +1135,7 @@ As a user, we will generally deal with Deployments and Pods instead of ReplicaSe
 
 We are now in a position to make **some** (but not complete) sense of this:
 
-```bash
+```console
 $ kubectl explain deployment
 KIND:     Deployment
 VERSION:  apps/v1
@@ -1147,7 +1147,7 @@ DESCRIPTION:
 
 Some sense is enough for now. Lets move on to the next interesting bit in our kubectl tour:
 
-```bash
+```console
 $ kubectl get
 You must specify the type of resource to get. Use "kubectl api-resources" for a complete list of supported resources.
 
@@ -1187,7 +1187,7 @@ So we now know that we have a Deployment running on a cluster with a ReplicaSet 
 
 Perhaps its time to dive back into the kubectl 🧰 and see what else we have at our hand 🙂
 
-```bash
+```console
 $ kubectl
 ..
 Basic Commands (Intermediate):
@@ -1200,7 +1200,7 @@ label selector
 
 Delete is always interesting. If we are successful in deleting the stuff that we created, it will provided us with the opportunity to create it again. If we are successful a second time, it would mean we have something on our hands that is reproducible.
 
-```bash
+```console
 $ kubectl delete deployment webconsole
 deployment.apps "webconsole" deleted
 
@@ -1215,7 +1215,7 @@ No resources found in default namespace.
 
 And now again:
 
-```bash
+```console
 $ kubectl run webconsole --image pyconuk-2018-k8s:step2
 deployment.apps/webconsole created
 
@@ -1232,7 +1232,7 @@ We have something that is reproducible and not a ❄️
 
 There was another thing that caught my eye in the kubectl help:
 
-```bash
+```console
 $ kubectl
 ..
 Deploy Commands:
@@ -1243,7 +1243,7 @@ Deploy Commands:
 
 This is like the 3 most exciting things in Kubernetes. Lets start by exploring scale.
 
-```bash
+```console
 $ kubectl scale
 Error: required flag(s) "replicas" not set
 
@@ -1262,7 +1262,7 @@ I think I have a idea on how to do example #3 for our thing.
 
 I don't know about you but I ❤️the examples. Not enough CLI tools have them IMO.
 
-```bash
+```console
 $ kubectl scale --current-replicas=1 --replicas=4 deployment webconsole
 deployment.apps/webconsole scaled
 
@@ -1315,14 +1315,14 @@ We have also managed to figure out how to scale our application.
 
 If only we could **expose** our application to the universe outside the cluster.
 
-```bash
+```console
 $ kubectl | grep expose
   expose         Take a replication controller, service, deployment or pod and expose it as a new Kubernetes Service
 ```
 
 Don't you ❤️ it when the API is this good? I do.
 
-```bash
+```console
 $ kubectl expose
 error: You must provide one or more resources by argument or filename.
 Example resource specifications include:
@@ -1358,7 +1358,7 @@ Service selector service selector label resource blah blah blah blah..
 
 Lets break this down shall we?
 
-```bash
+```console
 $ kubectl explain service
 KIND:     Service
 VERSION:  v1
@@ -1376,7 +1376,7 @@ Sounds simple. Except for the **selector -** The bit that links a service to the
 
 Lets use another kubectl subcommand to help us out here:
 
-```bash
+```console
 $ kubectl describe deployment webconsole
 Name:                   webconsole
 Namespace:              default
@@ -1389,7 +1389,7 @@ Selector:               run=webconsole
 
 It seems our deployment has something called a selector.
 
-```bash
+```console
 $ kubectl get pods
 NAME                          READY   STATUS    RESTARTS   AGE
 webconsole-5b559bf485-rtsk5   1/1     Running   0          34m
@@ -1418,7 +1418,7 @@ Back to the bit where we were trying to expose our application running inside a 
 
 Lets refer to the help and pay close attention to the Usage:
 
-```bash
+```console
 $ kubectl expose -h
 ..
 Usage:
@@ -1454,7 +1454,7 @@ A service on the other hand provides a stable DNS that points to the right ephem
 
 Back to service types. It seems we are looking for 2 at this moment.
 
-```bash
+```console
 $ kubectl expose deployments/webconsole --port=5000 --type=LoadBalancer
 service/webconsole exposed
 ```
@@ -1469,7 +1469,7 @@ We have figured out a way to expose our service to the world outside the cluster
 
 Here is the final step. I promise. This is only needed for Minikube. It bridges the service that has now been exposed to the Minikube VM with your localhost:
 
-```bash
+```console
 $ minikube service webconsole
 
 |-----------|------------|-------------|---------------------------|
@@ -1516,7 +1516,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 I have one last trick left up my sleeve. Might as well:
 
-```bash
+```console
 $ python
 Python 3.8.5 (default, Aug 24 2020, 07:14:09)
 [Clang 11.0.3 (clang-1103.0.32.62)] on darwin

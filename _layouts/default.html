@@ -50,7 +50,11 @@
 				<div class="column column-25">
 					<div class="toc sticky"></div>
 				</div>
-				<div class="column column-75">{{ content }}</div>
+				<div class="column column-75">
+					<div class="content">
+						{{ content }}
+					</div>
+				</div>
 			</div>
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.min.js"></script>
@@ -61,7 +65,7 @@
 			// Where to render the table of contents.
 			tocSelector: 'div.toc',
 			// Where to grab the headings to build the table of contents.
-			contentSelector: 'div.home',
+			contentSelector: 'div.content',
 			// Which headings to grab inside of the contentSelector element.
 			headingSelector: 'h1, h2, h3, h4',
 			// For headings inside relative or absolute positioned containers within content.

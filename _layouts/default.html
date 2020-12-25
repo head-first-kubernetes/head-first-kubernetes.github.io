@@ -4,13 +4,11 @@
 		<title>{{ site.title }}</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/skeleton.css" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 		<style>
 			html {
-				  font-size: 80%;
-			}
-			code {
-				overflow: scroll;
+				  font-size: 75%;
 			}
 			img {
 				max-width: 100%;
@@ -22,10 +20,14 @@
 				position: -webkit-sticky;
 				position: sticky;
 				top: 0;
+				align-self: flex-start;
 			}
-			section.header {
-				padding-top: 10%;
-				padding-bottom: 10%;
+			div.header {
+				padding-top: 15%;
+				padding-bottom: 15%;
+			}
+			div.title {
+				align-self: center;
 			}
 		</style>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.css">
@@ -34,13 +36,21 @@
 	</head>
 	<body>
 		<div class="container">
-			<section class="header">
-				<h1 class="title">{{ site.title }}</h1>
-				<h4>{{ site.description }}</h2>
-			</section>
+			<div class="row header">
+				<div class="column title">
+					<h2 class="title">{{ site.title }}</h1>
+					<p>{{ site.description }}</p>
+					<a class="button" href="#">Edit on Github</a>
+				</div>
+				<div class="column">
+					<img src="/assets/images/header.svg" alt="Kubernetes">
+				</div>
+			</div>
 			<div class="row">
-				<div class="one-third column toc sticky"></div>
-				<div class="two-thirds column">{{ content }}</div>
+				<div class="column column-25">
+					<div class="toc sticky"></div>
+				</div>
+				<div class="column column-75">{{ content }}</div>
 			</div>
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.min.js"></script>
@@ -53,7 +63,7 @@
 			// Where to grab the headings to build the table of contents.
 			contentSelector: 'div.home',
 			// Which headings to grab inside of the contentSelector element.
-			headingSelector: 'h1, h2, h3',
+			headingSelector: 'h1, h2, h3, h4',
 			// For headings inside relative or absolute positioned containers within content.
 			hasInnerContainers: true,
 			});

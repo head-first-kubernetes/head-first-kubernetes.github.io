@@ -410,7 +410,7 @@ To which, the clever 🙇 writer would say:
 1. Good question.
 2. Python venv as the analogy for Docker died as soon as we moved from the What (isolation) to the How (API).
 
-![](assets/images/hello-docker-world/Untitled.png)
+![](assets/images/dwight.png)
 
 Docker has its own opinions on sandboxes, how they should be built and how processes should be run inside them.
 
@@ -736,7 +736,7 @@ $ curl localhost:5000
 Hello World!
 ```
 
-![](assets/images/hello-docker-world/Untitled%201.png)
+![](assets/images/marty.png)
 
 Now then 🚀
 
@@ -776,7 +776,7 @@ $ curl localhost:5000
 Hello World!
 ```
 
-![](assets/images/hello-docker-world/Untitled%202.png)
+![](assets/images/run.png)
 
 I hope this was fun.
 
@@ -792,7 +792,7 @@ In the previous chapter we introduced Flask and Docker (containers). Although it
 
 We are building an interactive Python web console. It's basically a webpage where users can run python without installing anything. There exists plenty of examples which do this: [Jupyterhub](https://jupyter.org/try), [Kaggle](https://www.kaggle.com/), [Google Colab](https://colab.research.google.com/), or even [Python's homepage](https://www.python.org/). Jupyterhub is also open source and you can run it locally. It looks like this:
 
-![](assets/images/hello-application/Screenshot_2020-08-14_at_07.39.40.png)
+![](assets/images/jupyter.png)
 
 It might sounds complicated, but Python wouldn't be Python if it wouldn't expose everything it can do to developers! It is actually very easy. A minimal example:
 
@@ -862,7 +862,7 @@ print(requests.post(
 
 Of course this is far too simple. As always with development, having a proof of concept, is nothing compared to actually creating something you can run on production. Not to mention: you are allowing anyone to run any code on your servers! I'm sure that if you leave this running for a day, your application pissed of a lot of all of your users, and someone managed to get access to your server.
 
-![](assets/images/hello-application/1_AjjSTJG6cqaMcBUSROPw0Q.jpeg)
+![](assets/images/its-fine.jpeg)
 
 As this book is about Kubernetes we will address most of these issue with Kubernetes. We will introduce you to everything you need to run most applications on Kubernetes, and even use some of it's advanced features.
 
@@ -888,7 +888,7 @@ Your CTO - in his/her infinite wisdom - have chosen to use Kubernetes to orchest
 
 Orchestrate is a word that is used often to describe Kubernetes. Lets nail down what that means before we move on with the rest of our story.
 
-![](assets/images/hello-kubernetes-world/Untitled.png)
+![](assets/images/Untitled.png)
 
 Orchestration in the context of Big Corp running a microservices architecture means 3 main things:
 
@@ -914,7 +914,7 @@ Big Corp know this too.
 
 But even with the shitty product, they would not want the embarrassment of being brought down by a TechCrunch article.
 
-![](assets/images/hello-kubernetes-world/Untitled%201.png)
+![](assets/images/Untitled%201.png)
 
 I mean the tweets write themselves  🤷‍♂️
 
@@ -960,7 +960,7 @@ Not because we had a million teams and services was the only way to stop them fr
 
 Not because of resume-driven development.
 
-![](assets/images/hello-kubernetes-world/Untitled%202.png)
+![](assets/images/Untitled%202.png)
 
 We split our API into 2 services because we had endpoints with drastic variance in load characteristics. The only way to utilize our infrastructure efficiently was to put these endpoints on different nodes.
 
@@ -1294,7 +1294,7 @@ webconsole-5b559bf485-rtsk5   1/1     Running   0          10m
 
 This is an actual picture of me from 2 years ago:
 
-![](assets/images/hello-kubernetes-world/Untitled%203.png)
+![](assets/images/Untitled%203.png)
 
 Bring on the hordes TechCrunch.
 

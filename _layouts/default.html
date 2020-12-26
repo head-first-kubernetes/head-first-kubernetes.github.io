@@ -15,11 +15,20 @@
 				margin-left: auto;
   				margin-right: auto;
 			}
+			code {
+				overflow: scroll;
+			}
+			.content {
+				padding-top: 5rem;
+			}
 			.sticky {
 				position: -webkit-sticky;
 				position: sticky;
-				top: 5%;
-				align-self: flex-start;
+				top: 5rem;
+				padding-right: 3rem;
+			}
+			hr {
+				margin: 3rem 0 3rem 0;
 			}
 		</style>
 		{% seo %}
@@ -27,23 +36,16 @@
 	<body>
 		<div class="container">
 			<div class="row">
-				<div class="col-sm d-flex align-items-center">
-					<div>
+				<div class="col-md-4">
+					<div class="sticky">
 						<h1>{{ site.title }}</h1>
 						<p>{{ site.description }}</p>
+						<img src="assets/images/header.svg" alt="Kubernetes" style="padding: 2rem 2rem 0 2rem">
+						<hr>
+						<div class="toc"></div>
 					</div>
 				</div>
-				<div class="col-sm">
-					<div>
-						<img src="assets/images/header.svg" alt="Kubernetes" style="width: 70%">
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					<div class="toc sticky"></div>
-				</div>
-				<div class="col-md-9">
+				<div class="col-md-8">
 					<div class="content">
 						{{ content }}
 					</div>

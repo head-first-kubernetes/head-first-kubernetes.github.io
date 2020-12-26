@@ -8,34 +8,20 @@
 		<link rel="stylesheet" href="assets/css/style.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 		<style>
-			html {
-				font-size: 75%;
-			}
-			code {
-				font-size: 100%;
-			}
 			img {
 				max-width: 100%;
 				display: block;
 				margin-left: auto;
   				margin-right: auto;
 			}
-			div.sticky {
+			.sticky {
 				position: -webkit-sticky;
 				position: sticky;
 				top: 5%;
 				align-self: flex-start;
 			}
-			div.header {
-				padding-top: 15%;
-				padding-bottom: 15%;
-			}
-			div.title {
-				align-self: center;
-			}
 		</style>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.css">
-		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
 		{% seo %}
 	</head>
 	<body>
@@ -51,10 +37,10 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="column column-25">
+				<div class="column">
 					<div class="toc sticky"></div>
 				</div>
-				<div class="column column-75">
+				<div class="column">
 					<div class="content">
 						{{ content }}
 					</div>
@@ -62,8 +48,6 @@
 			</div>
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-		<script>hljs.initHighlightingOnLoad();</script>
 		<script>
 			tocbot.init({
 			// Where to render the table of contents.

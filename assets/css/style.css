@@ -207,3 +207,8 @@
 .highlight {
   background-color: #f8f8f8;
 }
+
+
+.highlight pre.lineno {
+  color: #888888;
+}

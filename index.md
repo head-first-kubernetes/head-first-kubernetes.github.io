@@ -1,20 +1,24 @@
-# Head-First Kubernetes 
+# Head-First Kubernetes
 
 ---
 
 ## Introduction
 
-This is more-or-less a writeup of a 3-hour workshop we ran at PyConUK2019. The workshop was well received & we wanted to expand on it. Then COVID happened and so we thought we will writeup our thing and put it here as a tutorial. 
+This is more-or-less a writeup of a 3-hour workshop we ran at PyConUK2019. The workshop was well received & we wanted to expand on it. Then COVID happened and so we thought we will writeup our thing and put it here as a tutorial.
 
-Given that this tutorial started as a workshop, it is quite hands-on. You will not find many block diagrams in here. You might not find a lot of paragraphs either. 
+### Background
 
-In a workshop you learn: 
+Given that this tutorial started as a workshop, it is quite hands-on. You will not find many block diagrams in here. You might not find a lot of paragraphs either.
+
+In a workshop you learn:
 
 - bottom-up instead of top-down
 - by tinkering instead of looking at block diagrams
 - by doing instead of listening to how it's done
 
 Try and follow along. If you are having problems, [give us a shout](https://github.com/head-first-kubernetes/tutorial/issues/new).
+
+### Learning objectives
 
 This tutorial is squarely aimed at beginners and it is not very ambitious. After working through this, students should be able to do most of the following:
 
@@ -27,15 +31,17 @@ This tutorial is squarely aimed at beginners and it is not very ambitious. After
 
 This thing took 3 intense hours to run as a workshop. Given that this is now a writeup, it might take you longer. Take your time. Take regular breaks. Also take weird segways. Break things. Tear them apart to see how they work. You can always put it back together. Its just software.
 
+### Requirements
+
 Before you get started, make sure you have installed the following on your system:
 
 1. [Docker](https://docs.docker.com/get-docker/)
 2. [Python](https://www.python.org/downloads/)
 3. [Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 
-## Hello World API in Python
+### Hello World API in Python
 
-Lets start with a very simple Hello World API in Python. We will be using Flask. 
+Lets start with a very simple Hello World API in Python. We will be using Flask.
 
 For those who do not know, Flask is a minimal web framework for Python. The examples in this book will use Flask. In case you are not familiar with Python or Flask, we will walk you through the code. It should be pretty simple and easy to follow.
 
@@ -1618,11 +1624,11 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 Now, can you figure out whats happening here and why?
 
-We found a bug. Nothing new there, unless you are the best developer on the world! 
+We found a bug. Nothing new there, unless you are the best developer on the world!
 
-Let's assume we solved the issue. Now what? So far we can only created a deployment in kubernetes, delete it, or scale it. Deleting and recreating it doesn't feel right, who would bring down their application to update it? 
+Let's assume we solved the issue. Now what? So far we can only created a deployment in kubernetes, delete it, or scale it. Deleting and recreating it doesn't feel right, who would bring down their application to update it?
 
-Ok, fair enough, some companies do this, and sometimes it is needed. In a lot of cases, teams now prefer to update the application without anyone noticing. Can you imagine going to google.com and see: 
+Ok, fair enough, some companies do this, and sometimes it is needed. In a lot of cases, teams now prefer to update the application without anyone noticing. Can you imagine going to google.com and see:
 
 ![](assets/images/down.png)
 
@@ -1630,7 +1636,7 @@ Ok, fair enough, some companies do this, and sometimes it is needed. In a lot of
 
 Let's have a look at `kubectl help` again:
 
-```
+```console
 Basic Commands (Beginner):
   create        Create a resource from a file or from stdin.
   expose        Take a replication controller, service, deployment or pod and expose it as a new Kubernetes Service
@@ -1653,7 +1659,7 @@ Advanced Commands:
 
 There are a lot of options here: set, apply, patch, replace... Some of them mention a file, which we don't know anything about. So lets check set and patch.
 
-```bash
+```console
 $ kubectl set
 Configure application resources
 
@@ -1681,34 +1687,34 @@ Update field(s) of a resource using strategic merge patch, a JSON merge patch, o
 Examples:
   # Partially update a node using a strategic merge patch. Specify the patch as JSON.
   kubectl patch node k8s-node-1 -p '{"spec":{"unschedulable":true}}'
-  
+
   # Partially update a node using a strategic merge patch. Specify the patch as YAML.
   kubectl patch node k8s-node-1 -p $'spec:\n unschedulable: true'
-  
+
   # Partially update a node identified by the type and name specified in "node.json" using strategic merge patch.
   kubectl patch -f node.json -p '{"spec":{"unschedulable":true}}'
-  
+
   # Update a container's image; spec.containers[*].name is required because it's a merge key.
   kubectl patch pod valid-pod -p '{"spec":{"containers":[{"name":"kubernetes-serve-hostname","image":"new image"}]}}'
-  
+
   # Update a container's image using a json patch with positional arrays.
   kubectl patch pod valid-pod --type='json' -p='[{"op": "replace", "path": "/spec/containers/0/image", "value":"new
 image"}]'
 ```
 
-Kubectl set looks very limiting. But, if we update our application code, we have a new image and we could use this command to update the image, so why not? 
+Kubectl set looks very limiting. But, if we update our application code, we have a new image and we could use this command to update the image, so why not?
 
 Kubectl patch looks very complicated, and you don't even know what you are merging (probably some "file"). It mentions that JSON and YAML formats are accepted, so maybe that is the format of the file mentioned earlier? In that case, we might as well pass in a file, as we don't really want to be typing JSON in the command line. Let's take a look at those "files", and see what the deal is.
 
 ### Manifests
 
-When we used the commands in the previous chapter like create, scale, expose, they all create a document which they send to the kubernetes API. Everything in kubernetes from the a pod running you software, a deployment managing those pods (recreate crashed and other nice features), to exposing something on the network (a service) is an object. Each of those objects can be serialized to a document in either JSON or YAML. While the Kubernetes API works with JSON, for use humans 👽 kubectl translates this to and from YAML (or a nice little table), as this is way easier to read & write. You can always ask kubectl to give us JSON. 
+When we used the commands in the previous chapter like create, scale, expose, they all create a document which they send to the kubernetes API. Everything in kubernetes from the a pod running you software, a deployment managing those pods (recreate crashed and other nice features), to exposing something on the network (a service) is an object. Each of those objects can be serialized to a document in either JSON or YAML. While the Kubernetes API works with JSON, for use humans 👽 kubectl translates this to and from YAML (or a nice little table), as this is way easier to read & write. You can always ask kubectl to give us JSON.
 
 Let's have a look at the what we actually send to Kubernetes with kubectl commands starting with our deployment:
 
 ```yaml
 $ kubectl create deployment webconsole --image pyconuk-2018-k8s:step2 \
-  --port 5000 --dry-run=client -oyaml          
+  --port 5000 --dry-run=client -oyaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1726,15 +1732,15 @@ The command: `kubectl create deployment webconsole` just says we want to create 
 
 The `apiVersion` describes which api and version this uses, there is a core api, and in this case `apps`, an extension which exists for a long time now. This is also used to make user extensions for Kubernetes, which is out of scope for this book. Together with `kind`, the type of object, tell Kubernetes what to do this ball of text you threw at it.
 
-The next 3 top level elements are also common to all Kubernetes objects: metadata, spec, status. They are exactly what they say they are. 
+The next 3 top level elements are also common to all Kubernetes objects: metadata, spec, status. They are exactly what they say they are.
 
-- Metadata adds names, labels, and other basic info. 
-- Spec describes the actual object, and is different for every type. 
+- Metadata adds names, labels, and other basic info.
+- Spec describes the actual object, and is different for every type.
 - Status is used to store some status information, mostly for internal usage, but also very useful if you want to know what is going on.
 
-This might still feel very abstract. The name in metadata is used to point to a single object: gimme that deployment! 
+This might still feel very abstract. The name in metadata is used to point to a single object: gimme that deployment!
 
-Labels are used to address a group (more on that in just a moment): all of those idiots. 
+Labels are used to address a group (more on that in just a moment): all of those idiots.
 
 The status is difficult to read, but luckily you have those tables from kubectl (`kubectl get deployment` for example), which summarize that, for example:
 
@@ -1745,13 +1751,13 @@ webconsole   1/1     1            1           9s
 
 ### Why use Manifests
 
-I haven't even explained the bulk of all that text, and my throath is already dry from all the writing 😕. So let's talk why you should be happy about it, before you burn the book (and your laptop with it... ebooks are not so fun to light on fire). 
+I haven't even explained the bulk of all that text, and my throath is already dry from all the writing 😕. So let's talk why you should be happy about it, before you burn the book (and your laptop with it... ebooks are not so fun to light on fire).
 
 A little bit of history. If you have been running your own stuff, you might have just manually logged into a box and installed stuff, made changes. If it's just you and one server and not to much stuff to run, that might be fine. That's also how bigger companies tried to do this. They might have documented stuff (which got out of date), used handy tools (which would run a command on several servers). Fancier deployments used some automation like shell scripts. You wrote scripts to tell the server **how** you wanted to **change** something, it might have checked for a condition to ensure you cloud also run the script on a clean server. This is called **imperative** for the nerds under us. This was usually quiet difficult, sometimes didn't work on a new server, crashed for some random temporary failure.
 
 Newer tools, including Kubernetes, are **declaritive**. You tell the server, or with Kubernetes a cluster instead, **what** things should look like. Kubernetes will then see what it needs to do to make this happen, if anything needs to. Kubernetes usually goes a step further like you have seen in the previous chapter, it will try to keep everything as it should, not just when you ask it.
 
-And this is why we should probably use the `apply` command, you just send the same document with (minor) changes over, and Kubernetes will make it happen. This also makes code reviews easy, as YAML is pretty easy to review. 
+And this is why we should probably use the `apply` command, you just send the same document with (minor) changes over, and Kubernetes will make it happen. This also makes code reviews easy, as YAML is pretty easy to review.
 
 While the document still looks a bit long, a lot of it is pretty straight forward, and once your familiar they don't feel difficult. You won't really write them from scratch as you will copy the output of a kubectl create command, copy little snippets from the documentation, or from your own code base. There are also tools to help you, we briefly touch on that in chapter <>.
 
@@ -1785,6 +1791,20 @@ spec:
 
 The selector instructs the deployment to find existing pods by looking for pods with specific labels. Why, you ask? Kubernetes always tries to rely on the actual state, not the state it saved in memory or on disk. It could keep a list of pods belonging to a specific deployment, but what if one of them disappears. Remember, pods will only live as long as they run on the same server. If a pod misbehaves, and Kubernetes decided to kill it for everyones safety, the pod won't we relocated, but the deployment will create a new pod. The same will happen if the Node crashes, or get's restarted to update it's Kubernetes version.
 
-In the template find the same structure as the deployment, but apiVersion and kind is implied in this case. The metadata declares the same labels as the matchLabels in the selector, and the spec is something you would write for a pod. This one is straight forward: we have a list of containers which this pod should run with a name and an image. We also declare a port, and optionally give it a name. We do not declare any resources yet, that's something for later. 
+In the template find the same structure as the deployment, but apiVersion and kind is implied in this case. The metadata declares the same labels as the matchLabels in the selector, and the spec is something you would write for a pod. This one is straight forward: we have a list of containers which this pod should run with a name and an image. We also declare a port, and optionally give it a name. We do not declare any resources yet, that's something for later.
 
 The deployment also declares a update `strategy`, but it's empty. It uses the default strategy (the other one is not worth mentioning) called `RollingUpdate`, with the default options. Let's demonstrate this.
+
+## Next Steps
+
+We hope you enjoyed this whirlwind tour of modern DevOps just as much as we enjoyed writing it. Too many books on this subject have too much theory, require you to get on AWS etc. We have tried to make it practical and approachable.
+
+If you like this, you might be pleased to know that we are working on a book that follows in the same principles as this tutorial. In addition to the material covered in this tutorial, the book will also contain chapters on:
+
+* Kubernetes Jobs
+* Realtime provisioning
+* Databases
+* Persistent storage
+* Etc.
+
+If you are interested in the book, please let us know and we will drop you an email when it is published.

@@ -20,16 +20,16 @@
 				overflow: scroll;
 			}
 			.content {
-				padding-top: 5rem;
+				padding-top: 2rem;
 			}
 			.sticky {
 				position: -webkit-sticky;
 				position: sticky;
-				top: 5rem;
+				top: 2rem;
 				padding-right: 3rem;
 			}
 			hr {
-				margin: 2rem 0 2rem 0;
+				margin: 2rem 1rem 2rem 1rem;
 			}
 			.buttons {
 				text-align: center;
@@ -37,6 +37,25 @@
 			}
 			.header {
 				padding: 1rem 3rem 2rem 3rem
+			}
+			.subscribe {
+				margin-left: 3em;
+				margin-right: 3em;
+				margin-top: 1em;
+			}
+			.form-control {
+				margin-top: 1em;
+			}
+			footer {
+				padding: 1em;
+				margin-top: 3em;
+				color: white;
+				text-align: center;
+				background-color: #687076;
+			}
+			.toc {
+				margin-left: 3em;
+				margin-right: 3em;
 			}
 		</style>
 		{% seo %}
@@ -52,6 +71,15 @@
 							<a class="github-button" href="https://github.com/head-first-kubernetes/tutorial" data-icon="octicon-star" data-size="large" aria-label="Star head-first-kubernetes/tutorial on GitHub">Star</a>
 							<a class="github-button" href="https://github.com/head-first-kubernetes/tutorial/fork" data-icon="octicon-repo-forked" data-size="large" aria-label="Fork head-first-kubernetes/tutorial on GitHub">Fork</a>
 						</div>
+						<form action="https://tinyletter.com/head-first-kubernetes" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/head-first-kubernetes', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
+							<div class="subscribe">
+								<label>If you like this tutorial, you would ❤️ the book. Sign-up for updates & get 50% off on the book.</label>
+								<input class="form-control " type="text" name="email" id="tlemail" placeholder="name@example.com" />
+								<input type="hidden" value="1" name="embed"/>
+								<input class="btn btn-secondary col-12 form-control" type="submit" value="I want the book" />
+								<a href="#next-steps"><p style="margin-top: 1em; text-align:center;">What's in the book?</p></a>
+							</div>
+						</form>
 						<hr>
 						<div class="toc"></div>
 					</div>
@@ -63,6 +91,7 @@
 				</div>
 			</div>
 		</div>
+		<footer>Copyright Ali Zaidi and Paul Van der Linden 2021</footer>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.min.js"></script>
 		<script>
 			tocbot.init({
@@ -71,7 +100,7 @@
 			// Where to grab the headings to build the table of contents.
 			contentSelector: 'div.content',
 			// Which headings to grab inside of the contentSelector element.
-			headingSelector: 'h2, h3, h4',
+			headingSelector: 'h2, h3',
 			// For headings inside relative or absolute positioned containers within content.
 			hasInnerContainers: true,
 			});

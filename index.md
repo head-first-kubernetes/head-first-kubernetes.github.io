@@ -300,7 +300,7 @@ You can put these steps in a console script and it would work beautifully. More 
 
 Time to talk about sandbags.
 
-## Sandbox
+### Sandboxes
 
 A little reminder of what a Python virtual environment is.
 
@@ -374,7 +374,7 @@ openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
 
 So while the Python virtual environment provides nice isolation within the Python universe, it is still relies on being able to make a bunch of calls to operating system libraries (syscalls) that are not bundled inside the virtual environment.
 
-Not quite a sandbox then is it? 
+Not quite a sandbox then is it?
 
 ## Docker
 
@@ -840,7 +840,7 @@ Jupyterhub, for instance, is open source software. You can install and run it lo
 ![](images/hello-application/Screenshot_2020-08-14_at_07.39.40.png)
 
 Making an interactive Python web console might sounds complicated but we will be doing it one step at a time and we get a nice helping hand from Python:
- 
+
 ```python
 from code import InteractiveConsole
 console = InteractiveConsole()
@@ -927,7 +927,7 @@ I feel that my main job, as an author, is to get the readers excited about somet
 
 There are two possible whys of Kubernetes.
 
-### Big Corp Kubernetes
+#### Big Corp Kubernetes
 
 You work at a company that has implemented some kind of microservices architecture. Possibly, promulgating an engineering culture where the respective teams oversee particular features of the broader application from conception, design, development, all the way into production.
 
@@ -941,7 +941,7 @@ Orchestrate is a word that is used often to describe Kubernetes. Lets nail down 
 
 Orchestration in the context of Big Corp running a microservices architecture means 3 main things:
 
-#### Service Discovery
+##### Service Discovery
 
 Containers are meant to be ephemeral. Like cattle and not like pets.
 
@@ -951,7 +951,7 @@ The abstraction would mean that the containers could ephemeral all they like and
 
 This abstraction is called Service Discovery. Kubernetes provides it out of the box.
 
-#### Load Balancing
+##### Load Balancing
 
 So Big Corp has launched this awesome new product. They marketed it till the cows came home and now its time to launch.
 
@@ -975,7 +975,7 @@ You can also specify the amount of CPU and RAM each container needs and Kubernet
 
 Finally, Kubernetes takes care of the container health. It replaces the ones that fail a user-defined health check, taking care of not announcing them until they are ready etc.
 
-#### Automated rollouts and rollbacks
+##### Automated rollouts and rollbacks
 
 Finally, hopefully, someone would realize that the first version of awesome product was shit. At which point, they will iron out some of the bugs, rework some features etc. and try to push out a new release.
 
@@ -991,7 +991,7 @@ From my experience in such companies, it was often Kubernetes that made this hap
 
 It comes out of the box with the tools you need to rollout releases - and in case a release doesn't work, roll it back.
 
-### Startup Kubernetes
+#### Startup Kubernetes
 
 You work at a startup that has implemented a microservices architecture... 😂
 
@@ -1023,7 +1023,7 @@ Kubernetes helped us do all of that and it can help you too.
 
 Lets run our thing on Kubernetes 🚀
 
-### Setting up
+#### Set up
 
 In order to start on our adventure into the world of Kubernetes, we are going to install the awesome Minikube.
 
@@ -1132,7 +1132,7 @@ The second block of Basic Commands sounds promising but more importantly, **Inte
 
 Explain seems to suggest documentation of some kind. Lets ask it about deployments shall we?
 
-### Deplyments, Pods etc.
+### Deployments, Pods etc.
 
 ```console
 $ kubectl explain deployment
@@ -1753,7 +1753,7 @@ NAME         READY   UP-TO-DATE   AVAILABLE   AGE
 webconsole   1/1     1            1           9s
 ```
 
-### Why use Manifests
+#### Why use Manifests
 
 I haven't even explained the bulk of all that text, and my throath is already dry from all the writing 😕. So let's talk why you should be happy about it, before you burn the book (and your laptop with it... ebooks are not so fun to light on fire).
 
@@ -1803,12 +1803,19 @@ The deployment also declares a update `strategy`, but it's empty. It uses the de
 
 We hope you enjoyed this whirlwind tour of modern DevOps just as much as we enjoyed writing it. Too many books on this subject have too much theory, require you to get on AWS etc. We have tried to make it practical and approachable.
 
-If you like this, you might be pleased to know that we are working on a book that follows in the same principles as this tutorial. In addition to the material covered in this tutorial, the book will also contain chapters on:
+If you like this, you might be pleased to know that we are working on a book that follows in the same principles as this tutorial:
 
-* Kubernetes Jobs
-* Realtime provisioning
-* Databases
+> Show me or it didn't happen
+
+In addition to the material covered in this tutorial, the book will also cover:
+
+* RBAC
+* StatefulSets
+* DaemonSets
+* Database
 * Persistent storage
+* Production
 * Etc.
 
-If you are interested in the book, please let us know and we will drop you an email when it is published.
+If you are interested in the book, please let us know by putting your email in the form below and hitting "I want the book". As a thank you, everyone who subscribe will get a 50% discount on the book 🙏
+

@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="assets/css/style.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.css">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+		<!-- Place this tag in your head or just before your close body tag. -->
 		<title>{{ site.title }}</title>
 		<style>
 			img {
@@ -28,17 +29,29 @@
 				padding-right: 3rem;
 			}
 			hr {
-				margin: 3rem 0 3rem 0;
+				margin: 2rem 0 2rem 0;
+			}
+			.buttons {
+				text-align: center;
+				width: 100%;
+			}
+			.header {
+				padding: 1rem 3rem 2rem 3rem
 			}
 		</style>
 		{% seo %}
+		<script async defer src="https://buttons.github.io/buttons.js"></script>
 	</head>
 	<body>
 		<div class="container">
 			<div class="row">
 				<div class="col-md-4">
 					<div class="sticky">
-						<img src="assets/images/header.svg" alt="Kubernetes" style="padding: 2rem 2rem 0 2rem">
+						<img src="assets/images/header.svg" alt="Kubernetes" class="header">
+						<div class="buttons">
+							<a class="github-button" href="https://github.com/head-first-kubernetes/tutorial" data-icon="octicon-star" data-size="large" aria-label="Star head-first-kubernetes/tutorial on GitHub">Star</a>
+							<a class="github-button" href="https://github.com/head-first-kubernetes/tutorial/fork" data-icon="octicon-repo-forked" data-size="large" aria-label="Fork head-first-kubernetes/tutorial on GitHub">Fork</a>
+						</div>
 						<hr>
 						<div class="toc"></div>
 					</div>

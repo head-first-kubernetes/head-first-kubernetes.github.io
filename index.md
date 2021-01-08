@@ -91,7 +91,7 @@ zsh: command not found: 🙄
 
 This is fine. Sometimes. But if you are doing a bunch of work in Python, you would end up with 100s and 1000s of packages on your system. Meh.
 
-### Isolating dependencies using Python venv
+### Isolating dependencies
 
 The thing that solves this problem is called virtual environments or venv in the Python world.
 
@@ -233,7 +233,7 @@ wOot!  🙌
 
 I managed to write my excitement in the right window this time 💪
 
-### Distributing application using venv and pip
+### Distributing our application
 
 Before I move to containers and specifically Docker containers, I want to press home my advantage and introduce one more little magic trick in pip.
 
@@ -298,9 +298,11 @@ $ FLASK_APP=hello.py flask run
 
 You can put these steps in a console script and it would work beautifully. More or less. Until it doesn't.
 
-Time to talk about containers.
+Time to talk about sandbags.
 
-Before I do, a little reminder of what a Python virtual environment is.
+## Sandbox
+
+A little reminder of what a Python virtual environment is.
 
 ```console
 $ ls ~/.venv/k8s
@@ -338,7 +340,7 @@ drwxr-xr-x   8 alixedi  staff   256B Jul 31 13:09 Werkzeug-1.0.1.dist-info
 
 ```
 
-Its kind of like a sandbag. Sandbags are a cool idea. Like most cool ideas, the sandbag idea increases in awesomeness if we turn it all the way up to 10.
+Its kind of like a sandbox. Sandboxes are a cool idea. Like most cool ideas, the sandbox idea increases in awesomeness if we turn it all the way up to 10.
 
 This is what containers do. Well not all the way up to 10. That would be virtual machines. Maybe all the way to 8.
 
@@ -372,7 +374,7 @@ openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
 
 So while the Python virtual environment provides nice isolation within the Python universe, it is still relies on being able to make a bunch of calls to operating system libraries (syscalls) that are not bundled inside the virtual environment.
 
-Not quite a sandbox then is it? What if those junior devs are sporting the trendy surface machines running MS Windows?
+Not quite a sandbox then is it? 
 
 ## Docker
 
@@ -380,7 +382,7 @@ Not quite a sandbox then is it? What if those junior devs are sporting the trend
 
 This is where containers come in.
 
-Containers provide a sandbox for your process to run in. This sandbox is to Python virtual environment what Beyonce is to Britney Spears.
+Containers provide a sandbox for your process to run in. This sandbox is to Python virtual environment sandbox what Beyonce is to Britney Spears.
 
 Specifically:
 
@@ -398,22 +400,17 @@ The first thing we need to do is to write the Docker equivalent of our requireme
 A very basic Dockerfile for our application would look like the following:
 
 ```docker
-# Every docker container has a base image (More on images in the following paras).
-# It is specified using the FROM keyword on the first line of the Dockerfile.
-# Python.org conveniently publishes a bunch of base images that we can use to run Python applications.
-# We are using the python base image with the tag `alpine`.
-# This would give us a Python environment running on Alpine Linux - a light-weight distribution that is popular in the container world.
 FROM python:alpine
-
-# This copies our files to the root of our container.
 COPY hello.py requirements.txt /
-
-# This is pretty standard pip and we have already covered it.
-# The only interesting thing here is that we are choosing not to use venv.
-# We totally can but it will be like running an environment inside a more awesome environment so no need.
 RUN pip install -r requirements.txt
 
 ```
+
+1 - Every docker container has a base image (More on images in the following paras). It is specified using the FROM keyword on the first line of the Dockerfile. Python.org conveniently publishes a bunch of base images that we can use to run Python applications. We are using the python base image with the tag `alpine`. This would give us a Python environment running on Alpine Linux - a light-weight distribution that is popular in the container world.
+
+2 - This copies our files to the root of our container.
+
+3 - This is pretty standard pip and we have already covered it. The only interesting thing here is that we are choosing not to use venv. We totally can but it will be like running an environment inside a more awesome environment so no need.
 
 The attentive reader might ask:
 
@@ -825,16 +822,25 @@ We then ventured into containers, specifically Docker. We touched upon docker im
 
 Using a Hello World application was a bit of a necessity because we wanted complete attention on the container and not what was running inside it. I think we managed to do that but we do not intend to keep at it.
 
-### New API: A Python web console
+### A new API: Python web console
 
-In the previous chapter we introduced Flask and Docker (containers). Although it might be very interesting if you aren't familiar with it, the end result was a bit boring. Hello World is something you usually learn in the first 5 minutes of a programming tutorial. To make things a bit more interresting we say good bye to Hello World examples! Instead of showing some very fabricated standard examples, we will be building a real application. And like real developers 😉, we will be building up the application bit by bit.
+For the rest of this book, we want to work on with a proper, real-world (ish) application. This would require some investment e.g. digression into Python nitty gritty. We hope that this investment will pay dividends in your understanding and confidence when it comes to apply things that you learn here to your own projects.
 
-We are building an interactive Python web console. It's basically a webpage where users can run python without installing anything. There exists plenty of examples which do this: [Jupyterhub](https://jupyter.org/try), [Kaggle](https://www.kaggle.com/), [Google Colab](https://colab.research.google.com/), or even [Python's homepage](https://www.python.org/). Jupyterhub is also open source and you can run it locally. It looks like this:
+Here we are then. We spent a lot of time trying to choose an application that would allow us to exercise most of the important bits in Kubernetes. We chose to build an interactive Python web console - A webpage that lets users type and run arbitrary Python code.
 
-![](assets/images/jupyter.png)
+There are plenty of examples of this in the wild:
 
-It might sounds complicated, but Python wouldn't be Python if it wouldn't expose everything it can do to developers! It is actually very easy. A minimal example:
+* [Jupyterhub](https://jupyter.org/try)
+* [Kaggle](https://www.kaggle.com/)
+* [Google Colab](https://colab.research.google.com/)
+* [Python's homepage](https://www.python.org/)
 
+Jupyterhub, for instance, is open source software. You can install and run it locally. It looks like this:
+
+![](images/hello-application/Screenshot_2020-08-14_at_07.39.40.png)
+
+Making an interactive Python web console might sounds complicated but we will be doing it one step at a time and we get a nice helping hand from Python:
+ 
 ```python
 from code import InteractiveConsole
 console = InteractiveConsole()
@@ -845,7 +851,7 @@ while inp:
     console.runcode(inp)
 ```
 
-Which behaves like a very basic python command line:
+In less than 10 lines of code, we have something that behaves like a primitive Python command line:
 
 ```python
 >>> print('Hello World')
@@ -889,7 +895,9 @@ def run(uname):
 		)
 ```
 
-Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. A little demonstration on how to use it from a python script (pip install a handy package called `requests` first).
+Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. We think that this would be enough for the purpose of learning Kubernetes.
+
+A little demonstration on how to use it from a python script (pip install a handy package called `requests` first):
 
 ```python
 import requests
@@ -911,7 +919,7 @@ As this book is about Kubernetes we will address most of these issue with Kubern
 
 When I started writing this in my head, I decided that I will not go into too much details about the why of Kubernetes.
 
-You - the reader - are reading this book so it is a fair assumption on my part that you have figured out your whys, and they are all lined up like:  🦆 🦆 🦆
+You - the reader - are reading this tutorial so it is a fair assumption on my part that you have figured out your whys, and they are all lined up like:  🦆 🦆 🦆
 
 On the other hand, having just written the chapter on Docker, half of which - to be honest - was expanding on why, I feel uncomfortable in stopping short of putting down something on the why of Kubernetes.
 
@@ -921,7 +929,7 @@ There are two possible whys of Kubernetes.
 
 ### Big Corp Kubernetes
 
-You work at a company that has implemented some kind of microservices architecture. Possibly,  promulgating an engineering culture where the respective teams oversee particular features of the broader application from conception, design, development, all the way into production.
+You work at a company that has implemented some kind of microservices architecture. Possibly, promulgating an engineering culture where the respective teams oversee particular features of the broader application from conception, design, development, all the way into production.
 
 You are a junior developers hired because you traversed that f**king binary tree on the whiteboard in 5 minutes of sharpie-ballet. Well done for the gumption to read CTCI. Twice. Now that you are in, you want to get cracking.
 
@@ -997,7 +1005,7 @@ Funny enough, I first came upon Kubernetes at such a startup. Our problem - like
 
 This lead us towards services.
 
-Not because we had a million teams and services was the only way to stop them from treading on toes
+Not because we had a million teams and services was the only way to stop them from treading on toes.
 
 Not because of resume-driven development.
 
@@ -1015,7 +1023,7 @@ Kubernetes helped us do all of that and it can help you too.
 
 Lets run our thing on Kubernetes 🚀
 
-### Setting up Kuberentes
+### Setting up
 
 In order to start on our adventure into the world of Kubernetes, we are going to install the awesome Minikube.
 
@@ -1051,7 +1059,7 @@ Hopefully, you would have noticed by now that the underlying principle of this b
 
 In keeping with this principle, we would like to fiddle with Kubernetes. kubectl - the CLI tool for Kubernetes lets us do just that.
 
-For starters, we should just type kubectl in our terminal and see what that does:
+For starters, we should just type kubectl in our terminal and see what that goes:
 
 ```console
 $ kubectl
@@ -1087,7 +1095,7 @@ In the last chapter, we learned how to build an image. I would propose that you 
 We are about to feed that image into kubectl:
 
 ```console
-$ kubectl run webconsole --image pyconuk-2018-k8s:step2
+$ kubectl run webconsole --image webconsole:v1
 deployment.apps/webconsole created
 
 $ woOt!
@@ -1262,7 +1270,7 @@ No resources found in default namespace.
 And now again:
 
 ```console
-$ kubectl run webconsole --image pyconuk-2018-k8s:step2
+$ kubectl run webconsole --image webconsole:v1
 deployment.apps/webconsole created
 
 $ kubectl get deployment
@@ -1276,6 +1284,8 @@ webconsole-5b559bf485-rtsk5   1/1     Running   0          5s
 
 We have something that is reproducible and not a ❄️
 
+### Scaling
+
 There was another thing that caught my eye in the kubectl help:
 
 ```console
@@ -1286,8 +1296,6 @@ Deploy Commands:
   scale          Set a new size for a Deployment, ReplicaSet, Replication Controller, or Job
   autoscale      Auto-scale a Deployment, ReplicaSet, or ReplicationController
 ```
-
-### Scaling
 
 This is like the 3 most exciting things in Kubernetes. Lets start by exploring scale.
 
@@ -1355,11 +1363,7 @@ Lets step back and take stock for what we have right now.
 
 We have a cluster. Sort of. We have Minikube. Its running a VM on our machine essentially. Inside that VM is a Kubernetes cluster.
 
-We have - by now - figured out:
-
-How to deploy our application to a Kubernetes cluster.
-
-We have also managed to figure out how to scale our application.
+We have - by now - figured out: How to deploy our application to a Kubernetes cluster. We have also managed to figure out how to scale our application.
 
 If only we could **expose** our application to the universe outside the cluster.
 

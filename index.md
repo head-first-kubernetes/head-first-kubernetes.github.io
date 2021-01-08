@@ -837,7 +837,7 @@ There are plenty of examples of this in the wild:
 
 Jupyterhub, for instance, is open source software. You can install and run it locally. It looks like this:
 
-![](assets/images/jupyter.jpeg)
+![](assets/images/jupyter.png)
 
 Making an interactive Python web console might sounds complicated but we will be doing it one step at a time and we get a nice helping hand from Python:
 

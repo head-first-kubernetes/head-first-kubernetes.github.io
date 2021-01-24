@@ -542,7 +542,7 @@ Much better.
 Except next time, we could bundle up the naming and tagging in the build command itself:
 
 ```console
-$ docker build . --tag hello:v1
+$ docker build --tag hello:v1 .
 ```
 
 Now that we know HOW to name and tag our images, its probably useful to understand WHY.
@@ -626,7 +626,7 @@ RUN pip install -r requirements.txt
 Build a new version of the image:
 
 ```console
-$ docker build . hello:v2
+$ docker build -t hello:v2 .
 ```
 
 In order to inspect the layers:
@@ -801,7 +801,7 @@ CMD ["flask", "run", "-h", "0.0.0.0"]
 Lets build and run this baby:
 
 ```console
-$ docker build . hello:v3
+$ docker build -t hello:v3 .
 $ docker run -p 5000:5000 hello:v3
 ```
 
@@ -865,9 +865,12 @@ We can easily combine this with our Docker hello world example and we have a (mu
 
 ```python
 import code
-import, ioimport, contextlibimport
+import io
+import contextlib
 
-flaskapp = flask.Flask(__name__)
+import flask
+
+app = flask.Flask(__name__)
 
 app.consoles = {}
 
@@ -893,16 +896,33 @@ def run(uname):
 				flask.request.get_json()['input']
 			)
 		)
+
+def shutdown_server():
+    func = flask.request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+@app.route('/api/crash/', methods=['GET'])
+def crash():
+    shutdown_server()
 ```
 
 Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. We think that this would be enough for the purpose of learning Kubernetes.
+
+Let's wrap this in an image and run it:
+
+```console
+$ docker build -t webconsole:v1 .
+$ docker run -p 6000:6000 webconsole:v1
+```
 
 A little demonstration on how to use it from a python script (pip install a handy package called `requests` first):
 
 ```python
 import requests
 print(requests.post(
-	'http://localhost:5000/api/ali/run/',
+	'http://localhost:6000/api/ali/run/',
 	json={'input': 'print("Hello World")'}
 ).json())
 ```
@@ -1091,6 +1111,7 @@ Absolutely fucking beautiful! 😍
 I love a CLI tool that goes out of its way to be helpful. kubectl has made a very good start. Not only is it telling me what I am missing but it goes one step further and provides me examples.
 
 In the last chapter, we learned how to build an image. I would propose that you build one for our application right now.
+Remember: you might want to use the docker daemon which is running inside minikube.
 
 We are about to feed that image into kubectl:
 
@@ -1717,7 +1738,7 @@ When we used the commands in the previous chapter like create, scale, expose, th
 Let's have a look at the what we actually send to Kubernetes with kubectl commands starting with our deployment:
 
 ```yaml
-$ kubectl create deployment webconsole --image pyconuk-2018-k8s:step2 \
+$ kubectl create deployment webconsole --image webconsole:v1 \
   --port 5000 --dry-run=client -oyaml
 apiVersion: apps/v1
 kind: Deployment
@@ -1783,8 +1804,8 @@ spec:
         app: webconsole
     spec:
       containers:
-      - image: pyconuk-2018-k8s:step2
-        name: pyconuk-2018-k8s
+      - image: webconsole:v1
+        name: webconsole
         resources: {}
         ports:
           - name: api
@@ -1818,4 +1839,3 @@ In addition to the material covered in this tutorial, the book will also cover:
 * Etc.
 
 If you are interested in the book, please let us know by putting your email in the form below and hitting "I want the book". As a thank you, everyone who subscribe will get a 50% discount on the book 🙏
-

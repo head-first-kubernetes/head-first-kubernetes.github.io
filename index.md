@@ -867,6 +867,7 @@ We can easily combine this with our Docker hello world example and we have a (mu
 import code
 import io
 import contextlib
+import signal
 
 import flask
 
@@ -898,14 +899,14 @@ def run(uname):
   )
 
 def shutdown_server():
-    func = flask.request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
+  raise RuntimeError('Shutdown')
 
 @app.route('/api/crash/', methods=['GET'])
 def crash():
     shutdown_server()
+
+# We want Flask to shutdown when requested
+signal.signal(signal.SIGTERM, shutdown_server)
 ```
 
 Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. We think that this would be enough for the purpose of learning Kubernetes.

@@ -542,7 +542,7 @@ Much better.
 Except next time, we could bundle up the naming and tagging in the build command itself:
 
 ```console
-$ docker build . --tag hello:v1
+$ docker build --tag hello:v1 .
 ```
 
 Now that we know HOW to name and tag our images, its probably useful to understand WHY.
@@ -626,7 +626,7 @@ RUN pip install -r requirements.txt
 Build a new version of the image:
 
 ```console
-$ docker build . hello:v2
+$ docker build -t hello:v2 .
 ```
 
 In order to inspect the layers:
@@ -801,7 +801,7 @@ CMD ["flask", "run", "-h", "0.0.0.0"]
 Lets build and run this baby:
 
 ```console
-$ docker build . hello:v3
+$ docker build -t hello:v3 .
 $ docker run -p 5000:5000 hello:v3
 ```
 
@@ -865,9 +865,13 @@ We can easily combine this with our Docker hello world example and we have a (mu
 
 ```python
 import code
-import, ioimport, contextlibimport
+import io
+import contextlib
+import signal
 
-flaskapp = flask.Flask(__name__)
+import flask
+
+app = flask.Flask(__name__)
 
 app.consoles = {}
 
@@ -882,27 +886,44 @@ class WebConsole:
 			with contextlib.redirect_stderr(output):
 				for line in code.splitlines():
 					self.console.push(line)
-					return {'output': str(output.getvalue())}
+    return {'output': str(output.getvalue())}
 
 @app.route('/api/<uname>/run/', methods=['POST'])
 def run(uname):
 	if not uname in app.consoles:
 		app.consoles[uname] = WebConsole()
-		return flask.jsonify(
-			app.consoles[uname].run(
-				flask.request.get_json()['input']
-			)
-		)
+  return flask.jsonify(
+    app.consoles[uname].run(
+      flask.request.get_json()['input']
+    )
+  )
+
+def shutdown_server():
+  raise RuntimeError('Shutdown')
+
+@app.route('/api/crash/', methods=['GET'])
+def crash():
+    shutdown_server()
+
+# We want Flask to shutdown when requested
+signal.signal(signal.SIGTERM, shutdown_server)
 ```
 
 Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. We think that this would be enough for the purpose of learning Kubernetes.
+
+Let's wrap this in an image and run it:
+
+```console
+$ docker build -t webconsole:v1 .
+$ docker run -p 6000:6000 webconsole:v1
+```
 
 A little demonstration on how to use it from a python script (pip install a handy package called `requests` first):
 
 ```python
 import requests
 print(requests.post(
-	'http://localhost:5000/api/ali/run/',
+	'http://localhost:6000/api/ali/run/',
 	json={'input': 'print("Hello World")'}
 ).json())
 ```
@@ -1091,6 +1112,7 @@ Absolutely fucking beautiful! 😍
 I love a CLI tool that goes out of its way to be helpful. kubectl has made a very good start. Not only is it telling me what I am missing but it goes one step further and provides me examples.
 
 In the last chapter, we learned how to build an image. I would propose that you build one for our application right now.
+Remember: you might want to use the docker daemon which is running inside minikube.
 
 We are about to feed that image into kubectl:
 
@@ -1717,7 +1739,7 @@ When we used the commands in the previous chapter like create, scale, expose, th
 Let's have a look at the what we actually send to Kubernetes with kubectl commands starting with our deployment:
 
 ```yaml
-$ kubectl create deployment webconsole --image pyconuk-2018-k8s:step2 \
+$ kubectl create deployment webconsole --image webconsole:v1 \
   --port 5000 --dry-run=client -oyaml
 apiVersion: apps/v1
 kind: Deployment
@@ -1783,8 +1805,8 @@ spec:
         app: webconsole
     spec:
       containers:
-      - image: pyconuk-2018-k8s:step2
-        name: pyconuk-2018-k8s
+      - image: webconsole:v1
+        name: webconsole
         resources: {}
         ports:
           - name: api
@@ -1795,7 +1817,7 @@ spec:
 
 The selector instructs the deployment to find existing pods by looking for pods with specific labels. Why, you ask? Kubernetes always tries to rely on the actual state, not the state it saved in memory or on disk. It could keep a list of pods belonging to a specific deployment, but what if one of them disappears. Remember, pods will only live as long as they run on the same server. If a pod misbehaves, and Kubernetes decided to kill it for everyones safety, the pod won't we relocated, but the deployment will create a new pod. The same will happen if the Node crashes, or get's restarted to update it's Kubernetes version.
 
-In the template find the same structure as the deployment, but apiVersion and kind is implied in this case. The metadata declares the same labels as the matchLabels in the selector, and the spec is something you would write for a pod. This one is straight forward: we have a list of containers which this pod should run with a name and an image. We also declare a port, and optionally give it a name. We do not declare any resources yet, that's something for later.
+In the template you find the same structure as the deployment, but apiVersion and kind is implied in this case. The metadata declares the same labels as the matchLabels in the selector, and the spec is something you would write for a pod. This one is straight forward: we have a list of containers which this pod should run with a name and an image. We also declare a port, and optionally give it a name. We do not declare any resources yet, that's something for later.
 
 The deployment also declares a update `strategy`, but it's empty. It uses the default strategy (the other one is not worth mentioning) called `RollingUpdate`, with the default options. Let's demonstrate this.
 
@@ -1818,4 +1840,3 @@ In addition to the material covered in this tutorial, the book will also cover:
 * Etc.
 
 If you are interested in the book, please let us know by putting your email in the form below and hitting "I want the book". As a thank you, everyone who subscribe will get a 50% discount on the book 🙏
-

@@ -56,7 +56,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-	return "Hello World!"
+    return "Hello World!"
 ```
 
 1 - A single-line comment in Python.
@@ -877,29 +877,30 @@ app.consoles = {}
 
 class WebConsole:
 
-	def __init__(self):
-		self.console = code.InteractiveConsole()
+    def __init__(self):
+        self.console = code.InteractiveConsole()
 
-	def run(self, code):
-		output = io.StringIO()
-		with contextlib.redirect_stdout(output):
-			with contextlib.redirect_stderr(output):
-				for line in code.splitlines():
-					self.console.push(line)
-    return {'output': str(output.getvalue())}
+    def run(self, code):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            with contextlib.redirect_stderr(output):
+                for line in code.splitlines():
+                    self.console.push(line)
+
+        return {'output': str(output.getvalue())}
 
 @app.route('/api/<uname>/run/', methods=['POST'])
 def run(uname):
-	if not uname in app.consoles:
-		app.consoles[uname] = WebConsole()
-  return flask.jsonify(
-    app.consoles[uname].run(
-      flask.request.get_json()['input']
+    if not uname in app.consoles:
+        app.consoles[uname] = WebConsole()
+    return flask.jsonify(
+        app.consoles[uname].run(
+            flask.request.get_json()['input']
+        )
     )
-  )
 
 def shutdown_server():
-  raise RuntimeError('Shutdown')
+    raise RuntimeError('Shutdown')
 
 @app.route('/api/crash/', methods=['GET'])
 def crash():
@@ -923,8 +924,8 @@ A little demonstration on how to use it from a python script (pip install a hand
 ```python
 import requests
 print(requests.post(
-	'http://localhost:6000/api/ali/run/',
-	json={'input': 'print("Hello World")'}
+    'http://localhost:6000/api/ali/run/',
+    json={'input': 'print("Hello World")'}
 ).json())
 ```
 
@@ -1820,6 +1821,363 @@ The selector instructs the deployment to find existing pods by looking for pods 
 In the template you find the same structure as the deployment, but apiVersion and kind is implied in this case. The metadata declares the same labels as the matchLabels in the selector, and the spec is something you would write for a pod. This one is straight forward: we have a list of containers which this pod should run with a name and an image. We also declare a port, and optionally give it a name. We do not declare any resources yet, that's something for later.
 
 The deployment also declares a update `strategy`, but it's empty. It uses the default strategy (the other one is not worth mentioning) called `RollingUpdate`, with the default options. Let's demonstrate this.
+
+## Kubernetes Jobs
+
+### Introduction
+
+We found a bug, and we know how to update our application in Kubernetes 🎉. Now we can actually back to solving the issue, but we first need to understand our bug. If you haven't figured it out yourself, it would be good to have a look yourself. We created the bug by just scaling our application 🙀.
+
+I think you realized why this is happening, but don't worry we will still explain it. As we now have more then one instance of the application, our requests land on one of those 4 instances. The kubernetes service acts as a load balancer, and we don't control which one. Our personal python interpreter is only running on one of them. If it happens to land on the wrong one, our code won't execute 😿! On top of that, we also don't control where our first request arrives, this means our scaling can be pretty useless. If all requests to create a new python interpreter lands on the same instance we still have have only once instance which handles everything🤦‍♀️!
+
+Our python interpreters are essentially long running jobs, so let's treat it like that. Kubernetes actually has a Job payload. Isn't that convenient 🙃?
+
+### Kubernetes jobs
+
+To solve our bug, we create a new service "consolehub". Let's have a look:
+
+```python
+import logging
+import signal
+import sys
+
+import flask
+import kubernetes
+import ruamel.yaml
+import requests
+
+logger = logging.getLogger(__name__)
+
+app = flask.Flask(__name__)
+
+kubernetes.config.load_incluster_config()
+api = kubernetes.client.BatchV1Api()
+core = kubernetes.client.CoreV1Api()
+
+def start_webconsole(uname):
+    with open('job-template.yaml') as fo:
+        job = ruamel.yaml.safe_load(fo)
+    job['metadata'] = {
+        'name': 'webconsole-{}'.format(uname),
+    }
+    job['spec']['template']['metadata'] = {
+        'labels': {'uname': uname, 'managed-by': 'provisioner'}
+    }
+
+    try:
+        api.create_namespaced_job(
+            namespace='default', body=job, pretty=True,
+            _request_timeout=(15, 15),
+        )
+    except Exception as exc:
+        logger.exception('Error starting webconsole')
+        return str(exc)
+
+@app.route('/api/<uname>/start/', methods=['POST'])
+def start(uname):
+    err = start_webconsole(uname)
+    return flask.jsonify({'error': err})
+
+@app.route('/api/<uname>/run/', methods=['POST'])
+def run(uname):
+    result = core.list_namespaced_pod('default',
+			  label_selector='uname={}'.format(uname), _request_timeout=(15, 15))
+    ip = result.items[0].status.pod_ip
+    return requests.post(
+				'http://{}:5000/api/{}/run/'.format(ip, uname),
+				json=flask.request.get_json(), timeout=(15, 15)
+    ).content
+
+signal.signal(signal.SIGTERM, lambda *args: sys.exit(0))
+```
+
+You will first notice we have split up starting the webconsole and running code on it. This is just for us to cheat, and simplify the code 🤫.  During the initialization of the webapp, we also create some new objects. In line 13 we initialize the kubernetes API and load the configuration from the cluster the app is running on. We continue to create 2 api clients, one for each `apiVersion` we use in the code.
+
+Starting the webconsole is where we use these Kubernetes API clients. We first load a manifest from file, which we will treat as a template (line 18), and then we add a name for the job and a label for the actuall pod. We will need this later to find our running pod. We then call the api to create the job. Which is fairly similar to how we would use kubectl.
+
+Let's have a look what the job template looks like:
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+spec:
+  template:
+    spec:
+      containers:
+      - name: webconsole
+        image: webconsole:v1
+      restartPolicy: Never
+```
+
+Most of this should look familiar. `restartPolicy` is new, and it basically tells kubernetes to not automatically restart the pod when it stops, and is required for jobs. Jobs will automatically create a new pod, depending on some conditions.
+
+Running code on the created webconsole is fairly simple. On line 44 we lookup the running webconsole by label, and then we basically proxy between the running webconsole and the client. And that's all the code.
+
+Let's build the image, and finally have our first scalable application running on Kubernetes! All we need is some extra requirements in our requirements.txt:
+
+```yaml
+kubernetes
+ruamel.yaml
+requests
+```
+
+To get this to run, we need to do the following:
+
+- Build the image, and tag it with a different tag, let's call this one: `consolehub:v1`
+Don't forget to create a new Dockerfile where you use the new python file, and also make the job template available!
+- We should update the key `image` in our manifest
+- Deploy this
+
+After you have done the first steps, we should do the deployment and start a new webconsole together:
+
+```bash
+$ kubectl apply -f webconsole.yaml
+deployment.apps/webconsole configured
+$ curl http://172.17.0.2:32535/api/paul/start/ -X POST
+{"error":"(403)\nReason: Forbidden\nHTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff', 'Date': 'Mon, 25 Jan 2021 11:29:21 GMT', 'Content-Length': '366'})\nHTTP response body: {\n  \"kind\": \"Status\",\n  \"apiVersion\": \"v1\",\n  \"metadata\": {\n    \n  },\n  \"status\": \"Failure\",\n  \"message\": \"jobs.batch is forbidden: User \\\"system:serviceaccount:default:default\\\" cannot create resource \\\"jobs\\\" in API group \\\"batch\\\" in the namespace \\\"default\\\"\",\n  \"reason\": \"Forbidden\",\n  \"details\": {\n    \"group\": \"batch\",\n    \"kind\": \"jobs\"\n  },\n  \"code\": 403\n}\n"}
+```
+
+I missed something, and it still doesn't work 😿! Let's check the error in a more readable form:
+
+```bash
+$ kubectl get pods
+NAME                          READY   STATUS        RESTARTS   AGE
+webconsole-64f49d7578-q5lwq   1/1     Running       0          65s
+$ kubectl logs webconsole-64f49d7578-q5lwq
+* Serving Flask app "/consolehub.py"
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+Error starting webconsole
+Traceback (most recent call last):
+  File "/consolehub.py", line 29, in start_webconsole
+    api.create_namespaced_job(
+  File "/usr/local/lib/python3.9/site-packages/kubernetes/client/api/batch_v1_api.py", line 66, in create_namespaced_job
+    return self.create_namespaced_job_with_http_info(namespace, body, **kwargs)  # noqa: E501
+  File "/usr/local/lib/python3.9/site-packages/kubernetes/client/api/batch_v1_api.py", line 161, in create_namespaced_job_with_http_info
+    return self.api_client.call_api(
+  File "/usr/local/lib/python3.9/site-packages/kubernetes/client/api_client.py", line 348, in call_api
+    return self.__call_api(resource_path, method,
+  File "/usr/local/lib/python3.9/site-packages/kubernetes/client/api_client.py", line 180, in __call_api
+    response_data = self.request(
+  File "/usr/local/lib/python3.9/site-packages/kubernetes/client/api_client.py", line 391, in request
+    return self.rest_client.POST(url,
+  File "/usr/local/lib/python3.9/site-packages/kubernetes/client/rest.py", line 274, in POST
+    return self.request("POST", url,
+  File "/usr/local/lib/python3.9/site-packages/kubernetes/client/rest.py", line 233, in request
+    raise ApiException(http_resp=r)
+kubernetes.client.exceptions.ApiException: (403)
+Reason: Forbidden
+HTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff', 'Date': 'Mon, 25 Jan 2021 11:29:21 GMT', 'Content-Length': '366'})
+HTTP response body: {
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {
+
+  },
+  "status": "Failure",
+  "message": "jobs.batch is forbidden: User \"system:serviceaccount:default:default\" cannot create resource \"jobs\" in API group \"batch\" in the namespace \"default\"",
+  "reason": "Forbidden",
+  "details": {
+    "group": "batch",
+    "kind": "jobs"
+  },
+  "code": 403
+}
+
+172.18.0.1 - - [25/Jan/2021 11:29:21] "POST /api/paul/start/ HTTP/1.1" 200 -
+```
+
+We got a 403 Forbidden from the Kubernetes API. The message in the response is talking about an user which doesn't have access to "job.batch".
+
+### RBAC
+
+So far we have been able to communicate with the Kubernetes API just fine! Why is it, that as soon as we use code, it doesn't work? Or maybe we missed something else. Let's start a python interpreter on our local machine (Make sure you have the above python packages installed!):
+
+```bash
+$ python
+Python 3.9.1 (default, Dec 11 2020, 14:32:07)
+[GCC 7.3.0] :: Anaconda, Inc. on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import kubernetes
+>>> kubernetes.config.load_incluster_config()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/paul/anaconda3/envs/tut-ex/lib/python3.9/site-packages/kubernetes/config/incluster_config.py", line 118, in load_incluster_config
+    InClusterConfigLoader(
+  File "/home/paul/anaconda3/envs/tut-ex/lib/python3.9/site-packages/kubernetes/config/incluster_config.py", line 54, in load_and_set
+    self._load_config()
+  File "/home/paul/anaconda3/envs/tut-ex/lib/python3.9/site-packages/kubernetes/config/incluster_config.py", line 62, in _load_config
+    raise ConfigException("Service host/port is not set.")
+kubernetes.config.config_exception.ConfigException: Service host/port is not set.
+```
+
+Urgh, today is not a good day. Every move we get a slap on the wrist 😩. Ok, let's try again, we are not running in the cluster, so maybe we should load the config somewhere else? (To be clear, I press tab 2 times in the first row, this will give me some suggestions)
+
+```bash
+>>> kubernetes.config.load_
+kubernetes.config.load_incluster_config(       kubernetes.config.load_kube_config(            kubernetes.config.load_kube_config_from_dict(
+>>> kubernetes.config.load_kube_config()
+>>>
+```
+
+Success! I guess? Let's continue, and try to create a job:
+
+```bash
+>>> import ruamel.yaml
+>>>
+>>> api = kubernetes.client.BatchV1Api()
+>>> uname = 'paul'
+>>> with open('job-template.yaml') as fo:
+...     job = ruamel.yaml.safe_load(fo)
+...
+>>>
+>>> job['metadata'] = {
+...     'name': 'webconsole-{}'.format(uname),
+... }
+>>> job['spec']['template']['metadata'] = {
+...     'labels': {'uname': uname, 'managed-by': 'provisioner'}
+... }
+>>>
+>>> api.create_namespaced_job(
+...     namespace='default', body=job, pretty=True,
+...     _request_timeout=(15, 15),
+... )
+{'api_version': 'batch/v1',
+ 'kind': 'Job',
+...
+```
+
+Success again! Let's double check:
+
+```bash
+$ kubectl get jobs
+NAME              COMPLETIONS   DURATION   AGE
+webconsole-paul   0/1           80s        80s
+```
+
+That's a lot better! We basically need a better user. So far we only used the Kubernetes API with kubectl, and minikube automatically configures kubectl to have basically superuser permissions 🦹. We need to create an user which gives us enough access to do the operations we need.
+
+As this is just a tutorial we are not going in depth, but Kubernetes has something called "RBAC": Role-based access control. Let's YAML 💃🕺:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: consolehub
+rules:
+- apiGroups:
+    - "batch"
+  resources:
+    - jobs
+  verbs:
+    - create
+- apiGroups:
+    - ""
+  resources:
+    - pods
+  verbs:
+    - list
+```
+
+This role gives us access to two api groups: `batch` and `core` (""), in those api groups we get access to the resources we use `jobs` and `pods`. We also get access to certain "verbs", which are basically operations on these api's. To make things a little bit more complicated we can't use this role directly, we also need a user, or if you are a computer program a "service account":
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: consolehub
+  namespace: default
+```
+
+And we are not done yet, we also need to make clear what role this service account can use:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: consolehub
+subjects:
+- kind: ServiceAccount
+  name: consolehub
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: consolehub
+  apiGroup: rbac.authorization.k8s.io
+```
+
+Ok, I promise this is the last one. And we only added one line. This is our webconsole deployment, look at line 20, we just added `serviceAccount: consolehub` , to make clear we want to use the Service account.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: webconsole
+  name: webconsole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webconsole
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: webconsole
+    spec:
+      serviceAccount: consolehub
+      containers:
+        - image: consolehub:v1
+          name: webconsole
+          resources: {}
+          ports:
+            - name: api
+              containerPort: 5000
+```
+
+To finish this long wall of YAML manifests, I should actually proof we have a working application. I will deploy all this yaml, and remove the manually created job.
+
+```bash
+$ kubectl apply -f clusterrole.yaml -f serviceaccount.yaml \
+> -f clusterrolebinding.yaml -f deployment.yaml
+clusterrole.rbac.authorization.k8s.io/consolehub created
+serviceaccount/consolehub created
+clusterrolebinding.rbac.authorization.k8s.io/consolehub created
+deployment.apps/webconsole configured
+$ kubectl delete job webconsole-paul
+job.batch "webconsole-paul" deleted
+$ kubectl get pods
+NAME                          READY   STATUS        RESTARTS   AGE
+webconsole-597968874b-l5xzp   1/1     Running       0          8s
+webconsole-paul-s6zqr         0/1     Terminating   0          32m
+$ kubectl get pods
+NAME                          READY   STATUS    RESTARTS   AGE
+webconsole-597968874b-l5xzp   1/1     Running   0          26s
+```
+
+Proof 🏆
+
+```bash
+$ python
+Python 3.9.1 (default, Dec 11 2020, 14:32:07)
+[GCC 7.3.0] :: Anaconda, Inc. on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import requests
+>>> requests.post('http://172.17.0.2:32535/api/paul/start/').json()
+{'error': None}
+>>> requests.post('http://172.17.0.2:32535/api/paul/run/', json={'input': 'a=1\nb=1\n'}).json()
+{'output': ''}
+>>> requests.post('http://172.17.0.2:32535/api/paul/run/', json={'input': 'print(a + b)'}).json()
+{'output': '2\n'}
+```
+
+We can count 🥳.
 
 ## Next Steps
 

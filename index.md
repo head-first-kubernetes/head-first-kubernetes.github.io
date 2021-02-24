@@ -912,11 +912,11 @@ signal.signal(signal.SIGTERM, shutdown_server)
 
 Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. We think that this would be enough for the purpose of learning Kubernetes.
 
-Let's wrap this in an image and run it:
+Let's wrap this in an image and run it. You can use the last Dockerfile for this. Just replace `hello.py` with `webconsole.py`:
 
 ```console
 $ docker build -t webconsole:v1 .
-$ docker run -p 6000:6000 webconsole:v1
+$ docker run -p 5000:5000 webconsole:v1
 ```
 
 A little demonstration on how to use it from a python script (pip install a handy package called `requests` first):
@@ -924,7 +924,7 @@ A little demonstration on how to use it from a python script (pip install a hand
 ```python
 import requests
 print(requests.post(
-    'http://localhost:6000/api/ali/run/',
+    'http://localhost:5000/api/ali/run/',
     json={'input': 'print("Hello World")'}
 ).json())
 ```
@@ -1059,6 +1059,12 @@ I went with:
 
 ```console
 $ brew install minikube
+...
+$ minikube start
+...
+<bunch of downloads, might ask for password etc.>
+...
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
 ```
 
 Following this, it might be prudent to point your docker cli to the docker daemon that is running inside the VM. Instead of the one that is running on your machine, outside the VM.
@@ -1096,16 +1102,20 @@ Basic Commands (Beginner):
 ..
 ```
 
-Lots of interesting things under the ellipses but honestly, do we really feel like reading beyond **run**?
+Lots of interesting things under the ellipses but honestly, do we really feel like reading beyond **create**?
 
 ```console
-$ kubectl run
-Error: required flag(s) "image" not set
+$ kubectl create --help
+Create a resource from a file or from stdin.
+
+ JSON and YAML formats are accepted.
 
 Examples:
-  # Start a single instance of nginx.
-  kubectl run nginx --image=nginx
-..
+  # Create a pod using the data in pod.json.
+  kubectl create -f ./pod.json
+
+  # Create a pod based on the JSON passed into stdin.
+  cat pod.json | kubectl create -f -..
 ```
 
 Absolutely fucking beautiful! 😍
@@ -1113,25 +1123,22 @@ Absolutely fucking beautiful! 😍
 I love a CLI tool that goes out of its way to be helpful. kubectl has made a very good start. Not only is it telling me what I am missing but it goes one step further and provides me examples.
 
 In the last chapter, we learned how to build an image. I would propose that you build one for our application right now.
+
 Remember: you might want to use the docker daemon which is running inside minikube.
 
 We are about to feed that image into kubectl:
 
 ```console
-$ kubectl run webconsole --image webconsole:v1
+$ kubectl create deployment webconsole --image webconsole:v1
 deployment.apps/webconsole created
 
 $ woOt!
 zsh: command not found: woOt!
 ```
 
-Hmm, so we have ~~something~~ the promise of something called a deployment. We will come to it later.
+It seems that we have succeeded in creating *something* called `deployment.apps/webconsole`.
 
-Right now, it seems that we have succeeded at *something.*
-
-It also seems that this *something* is called deployment.apps/webconsole.
-
-It may be interesting to step back to kubectl and find out if it would help us explore the size and shape of what we have just done here.
+I can explain what a deployment is of we can take a step back and let `kubectl` help us explore the size and shape of what we have just done here.
 
 ```console
 $ kubectl
@@ -1151,7 +1158,7 @@ Basic Commands (Intermediate):
 ..
 ```
 
-The second block of Basic Commands sounds promising but more importantly, **Intermediate** already ****(!) LOL.
+The second block of Basic Commands sounds promising but more importantly, **Intermediate** already ****(!) LOL. I will be sad if this doesn't turn out to be a self-parody for tech careers.
 
 Explain seems to suggest documentation of some kind. Lets ask it about deployments shall we?
 
@@ -1293,7 +1300,7 @@ No resources found in default namespace.
 And now again:
 
 ```console
-$ kubectl run webconsole --image webconsole:v1
+$ kubectl create deployment webconsole --image webconsole:v1
 deployment.apps/webconsole created
 
 $ kubectl get deployment

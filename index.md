@@ -1116,6 +1116,30 @@ Examples:
 
   # Create a pod based on the JSON passed into stdin.
   cat pod.json | kubectl create -f -..
+
+Available Commands:
+  clusterrole         Create a ClusterRole.
+  clusterrolebinding  Create a ClusterRoleBinding for a particular ClusterRole
+  configmap           Create a configmap from a local file, directory or literal value
+  cronjob             Create a cronjob with the specified name.
+  deployment          Create a deployment with the specified name.
+...
+```
+
+Mmh, `deployment` 🤔, isn't that what we are trying to do?
+
+```console
+$ kubectl create deployment --help
+
+Create a deployment with the specified name.
+
+Aliases:
+deployment, deploy
+
+Examples:
+  # Create a deployment named my-dep that runs the busybox image.
+  kubectl create deployment my-dep --image=busybox
+...
 ```
 
 Absolutely fucking beautiful! 😍

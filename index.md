@@ -1857,9 +1857,9 @@ The deployment also declares a update `strategy`, but it's empty. It uses the de
 
 ### Introduction
 
-We found a bug, and we know how to update our application in Kubernetes 🎉. Now we can actually back to solving the issue, but we first need to understand our bug. If you haven't figured it out yourself, it would be good to have a look yourself. We created the bug by just scaling our application 🙀.
+We found a bug, and we know how to update our application in Kubernetes 🎉. Now we can actually go back to solving the issue, but we first need to understand our bug. If you haven't figured it out yourself, it would be good to have a try to do this yourself. We somehow created the bug by just scaling our application 🙀.
 
-I think you realized why this is happening, but don't worry we will still explain it. As we now have more then one instance of the application, our requests land on one of those 4 instances. The kubernetes service acts as a load balancer, and we don't control which one. Our personal python interpreter is only running on one of them. If it happens to land on the wrong one, our code won't execute 😿! On top of that, we also don't control where our first request arrives, this means our scaling can be pretty useless. If all requests to create a new python interpreter lands on the same instance we still have have only once instance which handles everything🤦‍♀️!
+I think you realized why this is happening. Don't worry if you don't, we will still explain it. As we now have more then one instance of the application, our requests land on one of those 4 instances. The kubernetes service acts as a load balancer, and we don't control which one. Our personal python interpreter is ofcourse only running on one of them. If it happens to land on the wrong one, our code won't execute 😿! On top of all that: we also can't control where our first request arrives, which means our scaling can be pretty useless. If all requests to create a new python interpreter lands on the same instance we still have have only one instance which holds all those interpreters🤦‍♀️!
 
 Our python interpreters are essentially long running jobs, so let's treat it like that. Kubernetes actually has a Job payload. Isn't that convenient 🙃?
 
@@ -1912,19 +1912,19 @@ def start(uname):
 @app.route('/api/<uname>/run/', methods=['POST'])
 def run(uname):
     result = core.list_namespaced_pod('default',
-			  label_selector='uname={}'.format(uname), _request_timeout=(15, 15))
+        label_selector='uname={}'.format(uname), _request_timeout=(15, 15))
     ip = result.items[0].status.pod_ip
     return requests.post(
-				'http://{}:5000/api/{}/run/'.format(ip, uname),
-				json=flask.request.get_json(), timeout=(15, 15)
+        'http://{}:5000/api/{}/run/'.format(ip, uname),
+        json=flask.request.get_json(), timeout=(15, 15)
     ).content
 
 signal.signal(signal.SIGTERM, lambda *args: sys.exit(0))
 ```
 
-You will first notice we have split up starting the webconsole and running code on it. This is just for us to cheat, and simplify the code 🤫.  During the initialization of the webapp, we also create some new objects. In line 13 we initialize the kubernetes API and load the configuration from the cluster the app is running on. We continue to create 2 api clients, one for each `apiVersion` we use in the code.
+You will first notice we have split up starting the webconsole itself and actually running code on it. This is just for us to cheat, and simplify the code 🤫.  During the initialization of the webapp, we also create some new objects. At line 14 we initialize the kubernetes API and load the configuration from the cluster. The next 2 lines creates api clients, one for each `apiVersion` we use in the code.
 
-Starting the webconsole is where we use these Kubernetes API clients. We first load a manifest from file, which we will treat as a template (line 18), and then we add a name for the job and a label for the actuall pod. We will need this later to find our running pod. We then call the api to create the job. Which is fairly similar to how we would use kubectl.
+The function at line 18 will make it possible to start a webconsole. To do this, we will use the normal YAML manifests we already seen before. In line 19 & 20 it is loaded and converted to a python object. Instead of sending this manifest as is, we treat it as a template! The job is given a name at line 21, and attach some labels to it at line 24. We can use these labels later to find back our running webconsole. The function finishes at line 29 by calling the Kubernetes API to create the job. This is call looks fairly similar to how it would work with kubectl.
 
 Let's have a look what the job template looks like:
 
@@ -1940,11 +1940,13 @@ spec:
       restartPolicy: Never
 ```
 
-Most of this should look familiar. `restartPolicy` is new, and it basically tells kubernetes to not automatically restart the pod when it stops, and is required for jobs. Jobs will automatically create a new pod, depending on some conditions.
+Most of this should look familiar. `restartPolicy` is new, and it basically tells kubernetes to not automatically restart the pod when it stops, and is required for jobs. Jobs will automatically create a new pod, depending on some conditions, and the normal restarting will just mess that up.
 
-Running code on the created webconsole is fairly simple. On line 44 we lookup the running webconsole by label, and then we basically proxy between the running webconsole and the client. And that's all the code.
+Running code on the created webconsole is fairly simple. At line 44 we lookup the running webconsole by the labels. The function then just acts as a proxy between the running webconsole and the client by using requests at line 47. And that's all the code. Let's recover from that...
 
-Let's build the image, and finally have our first scalable application running on Kubernetes! All we need is some extra requirements in our requirements.txt:
+![](assets/images/exhausted.jpeg)
+
+No that we recoverd, let's build the image. Finally we have our first scalable application running on Kubernetes! All we need is some extra packages in our requirements.txt:
 
 ```yaml
 kubernetes
@@ -1954,12 +1956,12 @@ requests
 
 To get this to run, we need to do the following:
 
-- Build the image, and tag it with a different tag, let's call this one: `consolehub:v1`
-Don't forget to create a new Dockerfile where you use the new python file, and also make the job template available!
-- We should update the key `image` in our manifest
+- Build the image and tag it, let's call this one: `consolehub:v1`.
+Don't forget to create a new Dockerfile in which you use the new python file, and also copy the job template!
+- We should update the key `image` in the Kubernetes manifest
 - Deploy this
 
-After you have done the first steps, we should do the deployment and start a new webconsole together:
+After you have done these first steps on your own (you can do it!), let's deploy this together and try it out:
 
 ```bash
 $ kubectl apply -f webconsole.yaml
@@ -1968,7 +1970,7 @@ $ curl http://172.17.0.2:32535/api/paul/start/ -X POST
 {"error":"(403)\nReason: Forbidden\nHTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff', 'Date': 'Mon, 25 Jan 2021 11:29:21 GMT', 'Content-Length': '366'})\nHTTP response body: {\n  \"kind\": \"Status\",\n  \"apiVersion\": \"v1\",\n  \"metadata\": {\n    \n  },\n  \"status\": \"Failure\",\n  \"message\": \"jobs.batch is forbidden: User \\\"system:serviceaccount:default:default\\\" cannot create resource \\\"jobs\\\" in API group \\\"batch\\\" in the namespace \\\"default\\\"\",\n  \"reason\": \"Forbidden\",\n  \"details\": {\n    \"group\": \"batch\",\n    \"kind\": \"jobs\"\n  },\n  \"code\": 403\n}\n"}
 ```
 
-I missed something, and it still doesn't work 😿! Let's check the error in a more readable form:
+Aargh, I missed something, again... It still doesn't work 😿! Let's check the error in a more readable form. You can requests the logs from any pod with kubectl:
 
 ```bash
 $ kubectl get pods
@@ -2023,9 +2025,11 @@ HTTP response body: {
 
 We got a 403 Forbidden from the Kubernetes API. The message in the response is talking about an user which doesn't have access to "job.batch".
 
+![](assets/images/headdesk.gif)
+
 ### RBAC
 
-So far we have been able to communicate with the Kubernetes API just fine! Why is it, that as soon as we use code, it doesn't work? Or maybe we missed something else. Let's start a python interpreter on our local machine (Make sure you have the above python packages installed!):
+So far we have been able to communicate with the Kubernetes API just fine! Why is it, that as soon as we use code, it doesn't work? Or maybe we missed something else... Let's start a python interpreter on our local machine (Make sure you have the above python packages installed!):
 
 ```bash
 $ python
@@ -2045,7 +2049,7 @@ Traceback (most recent call last):
 kubernetes.config.config_exception.ConfigException: Service host/port is not set.
 ```
 
-Urgh, today is not a good day. Every move we get a slap on the wrist 😩. Ok, let's try again, we are not running in the cluster, so maybe we should load the config somewhere else? (To be clear, I press tab 2 times in the first row, this will give me some suggestions)
+Urgh, today is not a good day. Every move we get a slap on the wrist 😩. Ok, let's try again, we are not running in the cluster, so maybe we should load the config somewhere else? (To be clear, I press tab 2 times in the first row, this will give usually give me some suggestions in the python CLI)
 
 ```bash
 >>> kubernetes.config.load_
@@ -2113,7 +2117,7 @@ rules:
     - list
 ```
 
-This role gives us access to two api groups: `batch` and `core` (""), in those api groups we get access to the resources we use `jobs` and `pods`. We also get access to certain "verbs", which are basically operations on these api's. To make things a little bit more complicated we can't use this role directly, we also need a user, or if you are a computer program a "service account":
+This role gives us access to two api groups at line 7 and 13: `batch` and `core` (""). In those api groups we request access to the resources we use: `jobs` (9) and `pods` (15). We also request access to certain "verbs", which are basically operations on these api's. The code needs to be able to "create" (11) jobs and "list" (17) pods. To make things a little bit more complicated we can't use roles directly, we also need a user or if you are a computer program a "service account":
 
 ```yaml
 apiVersion: v1
@@ -2123,7 +2127,7 @@ metadata:
   namespace: default
 ```
 
-And we are not done yet, we also need to make clear what role this service account can use:
+And ofcourse we also need to make clear what role(s) this service account can use:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -2140,7 +2144,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-Ok, I promise this is the last one. And we only added one line. This is our webconsole deployment, look at line 20, we just added `serviceAccount: consolehub` , to make clear we want to use the Service account.
+Ok, I promise this is the last wall of YAML 🧱, and it's just adding one line to the deployment yaml. To make it easier you can copy the whole YAML file below. The only change is line 20, we just added `serviceAccount: consolehub` , to make clear we want to use the Service account.
 
 ```yaml
 apiVersion: apps/v1
@@ -2172,7 +2176,7 @@ spec:
               containerPort: 5000
 ```
 
-To finish this long wall of YAML manifests, I should actually proof we have a working application. I will deploy all this yaml, and remove the manually created job.
+To finish this long wall of YAML manifests, I should actually proof we have a working application. Let's deploy all this yaml, and cleanup the manually created job.
 
 ```bash
 $ kubectl apply -f clusterrole.yaml -f serviceaccount.yaml \
@@ -2192,7 +2196,7 @@ NAME                          READY   STATUS    RESTARTS   AGE
 webconsole-597968874b-l5xzp   1/1     Running   0          26s
 ```
 
-Proof 🏆
+And now for the proof 🏆:
 
 ```bash
 $ python

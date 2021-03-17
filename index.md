@@ -245,7 +245,7 @@ Well, I agree that our little Hello World thing is not going to get into ycombin
 
 The thing with web applications - like all applications - is that they need to be chucked around fairly often. For instance:
 
-1. You might want to put our Hello World application in a code repository like GitHub. Every time someone in your team adds a little feature to it, you might want to run some tests using e.g. GitHub actions. This is called CI and its all the rave. Now in order to run tests on your application, GitHub actions would need to be able to easily install it - along with all its dependencies no?
+1. You might want to put our Hello World application in a code repository like GitHub. Every time someone in your team adds a little feature to it, you might want to run some tests using e.g. GitHub actions. This is called Continuous Integration (CI) and it's all the rave. Now in order to run tests on your application, GitHub actions would need to be able to easily install it - along with all its dependencies no?
 
 2. Once you have them features working, you might want to release the latest version of your application to your users. Generally, for web applications, this would mean putting them on a server. Same story here. On the server you would need to reproduce the environment that your web application needs in order to run. AKA install.
 
@@ -298,7 +298,7 @@ $ FLASK_APP=hello.py flask run
 
 You can put these steps in a console script and it would work beautifully. More or less. Until it doesn't.
 
-Time to talk about sandbags.
+Time to talk about sandboxes.
 
 ### Sandboxes
 

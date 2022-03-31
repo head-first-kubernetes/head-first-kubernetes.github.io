@@ -116,7 +116,7 @@ P.S. You can run many modules in Python by using the -m flag. I will come back t
 A virtual environment is nothing but a copy of all the files that are needed to run Python applications. You can see for yourself:
 
 ```console
-$ ls ~/.venv/k8s
+$ ls -lh ~/.venv/k8s
 drwxr-xr-x   6 alixedi  staff   192B Jul 31 13:01 .
 drwxr-xr-x  36 alixedi  staff   1.1K Jul 31 13:01 ..
 drwxr-xr-x  12 alixedi  staff   384B Jul 31 13:01 bin
@@ -128,7 +128,7 @@ drwxr-xr-x   3 alixedi  staff    96B Jul 31 13:01 lib
 Or more interestingly:
 
 ```console
-$ ls ~/.venv/k8s/bin
+$ ls -lh ~/.venv/k8s/bin
 -rw-r--r--  1 alixedi  staff  2244 Jul 31 13:01 activate
 -rw-r--r--  1 alixedi  staff  1300 Jul 31 13:01 activate.csh
 -rw-r--r--  1 alixedi  staff  2452 Jul 31 13:01 activate.fish

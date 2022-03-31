@@ -400,6 +400,7 @@ The first thing we need to do is to write the Docker equivalent of our requireme
 A very basic Dockerfile for our application would look like the following:
 
 ```docker
+# Dockerfile
 FROM python:alpine
 COPY hello.py requirements.txt /
 RUN pip install -r requirements.txt
@@ -1580,22 +1581,15 @@ We have figured out a way to expose our service to the world outside the cluster
 Here is the final step. I promise. This is only needed for Minikube. It bridges the service that has now been exposed to the Minikube VM with your localhost:
 
 ```console
-$ minikube service webconsole
-
-|-----------|------------|-------------|---------------------------|
-| NAMESPACE |    NAME    | TARGET PORT |            URL            |
-|-----------|------------|-------------|---------------------------|
-| default   | webconsole |        5000 | http://192.168.64.2:31075 |
-|-----------|------------|-------------|---------------------------|
-
-🎉  Opening service default/webconsole in default browser...
+$ minikube service webconsole --url
+http://192.168.64.2:31075
 ```
 
-We are in business it seems.
+🎉  We are in business it seems.
 
 ```python
 >>> import requests
->>> requests.post('http://192.168.64.2:31075/api/ali/run', json={'input': '5+5'}).json()
+>>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': '5+5'}).json()
 {'output': '10\n'}
 >>> Fucking awesome!
 File "<stdin>", line 1
@@ -1618,7 +1612,7 @@ Python 3.8.5 (default, Aug 24 2020, 07:14:09)
 [Clang 11.0.3 (clang-1103.0.32.62)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import requests
->>> requests.post('http://192.168.64.2:31075/api/ali/run', json={'input': '5+5'}).json()
+>>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': '5+5'}).json()
 {'output': '10\n'}
 ```
 
@@ -1634,7 +1628,7 @@ Python 3.8.5 (default, Aug 24 2020, 07:14:09)
 [Clang 11.0.3 (clang-1103.0.32.62)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import requests
->>> requests.get('http://192.168.64.2:31075/api/crash')
+>>> requests.get('http://192.168.64.2:31075/api/crash/')
 <Response [500]>
 ```
 
@@ -1674,9 +1668,9 @@ Python 3.8.5 (default, Aug 24 2020, 07:14:09)
 [Clang 11.0.3 (clang-1103.0.32.62)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import requests
->>> requests.post('http://192.168.64.2:31075/api/ali/run', json={'input': 'a=5'}).json()
+>>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': 'a=5'}).json()
 {'output': ''}
->>> requests.post('http://192.168.64.2:31075/api/ali/run', json={'input': 'a'}).json()
+>>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': 'a'}).json()
 {'output': 'Traceback (most recent call last):\n  File "<console>", line 1, in <module>\nNameError: name \'a\' is not defined\n'}
 ```
 

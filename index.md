@@ -869,6 +869,8 @@ import code
 import io
 import contextlib
 import signal
+import os
+import sys
 
 import flask
 
@@ -900,15 +902,12 @@ def run(uname):
         )
     )
 
-def shutdown_server():
-    raise RuntimeError('Shutdown')
-
 @app.route('/api/crash/', methods=['GET'])
 def crash():
-    shutdown_server()
+    os.kill(os.getpid(), signal.SIGTERM)
 
 # We want Flask to shutdown when requested
-signal.signal(signal.SIGTERM, shutdown_server)
+signal.signal(signal.SIGTERM, lambda *args: sys.exit(0))
 ```
 
 Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. We think that this would be enough for the purpose of learning Kubernetes.

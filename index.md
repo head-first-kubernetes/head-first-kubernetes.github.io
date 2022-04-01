@@ -1953,7 +1953,9 @@ requests
 To get this to run, we need to do the following:
 
 - Build the image and tag it, let's call this one: `consolehub:v1`.
-Don't forget to create a new Dockerfile in which you use the new python file, and also copy the job template!
+  Don't forget to create a new Dockerfile in which you use the new python file, and also copy the job template!
+- This might fail, as one of the requirements won't install on alpine linux.
+  You should change the base image from `python:alpine` to `python:3`.
 - We should update the key `image` in the Kubernetes manifest
 - Deploy this
 

@@ -869,6 +869,8 @@ import code
 import io
 import contextlib
 import signal
+import os
+import sys
 
 import flask
 
@@ -900,15 +902,12 @@ def run(uname):
         )
     )
 
-def shutdown_server():
-    raise RuntimeError('Shutdown')
-
 @app.route('/api/crash/', methods=['GET'])
 def crash():
-    shutdown_server()
+    os.kill(os.getpid(), signal.SIGTERM)
 
 # We want Flask to shutdown when requested
-signal.signal(signal.SIGTERM, shutdown_server)
+signal.signal(signal.SIGTERM, lambda *args: sys.exit(0))
 ```
 
 Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. We think that this would be enough for the purpose of learning Kubernetes.
@@ -1671,6 +1670,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': 'a=5'}).json()
 {'output': ''}
 >>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': 'a'}).json()
+{'output': '5'}
+>>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': 'a'}).json()
 {'output': 'Traceback (most recent call last):\n  File "<console>", line 1, in <module>\nNameError: name \'a\' is not defined\n'}
 ```
 
@@ -1951,7 +1952,9 @@ requests
 To get this to run, we need to do the following:
 
 - Build the image and tag it, let's call this one: `consolehub:v1`.
-Don't forget to create a new Dockerfile in which you use the new python file, and also copy the job template!
+  Don't forget to create a new Dockerfile in which you use the new python file, and also copy the job template!
+- This might fail, as one of the requirements won't install on alpine linux.
+  You should change the base image from `python:alpine` to `python:3`.
 - We should update the key `image` in the Kubernetes manifest
 - Deploy this
 
@@ -2202,6 +2205,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 {'error': None}
 >>> requests.post('http://172.17.0.2:32535/api/paul/run/', json={'input': 'a=1\nb=1\n'}).json()
 {'output': ''}
+>>> requests.post('http://172.17.0.2:32535/api/paul/run/', json={'input': 'print(a + b)'}).json()
+{'output': '2\n'}
 >>> requests.post('http://172.17.0.2:32535/api/paul/run/', json={'input': 'print(a + b)'}).json()
 {'output': '2\n'}
 ```

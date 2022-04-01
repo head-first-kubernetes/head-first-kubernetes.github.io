@@ -1671,6 +1671,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': 'a=5'}).json()
 {'output': ''}
 >>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': 'a'}).json()
+{'output': '5'}
+>>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': 'a'}).json()
 {'output': 'Traceback (most recent call last):\n  File "<console>", line 1, in <module>\nNameError: name \'a\' is not defined\n'}
 ```
 
@@ -2202,6 +2204,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 {'error': None}
 >>> requests.post('http://172.17.0.2:32535/api/paul/run/', json={'input': 'a=1\nb=1\n'}).json()
 {'output': ''}
+>>> requests.post('http://172.17.0.2:32535/api/paul/run/', json={'input': 'print(a + b)'}).json()
+{'output': '2\n'}
 >>> requests.post('http://172.17.0.2:32535/api/paul/run/', json={'input': 'print(a + b)'}).json()
 {'output': '2\n'}
 ```

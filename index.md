@@ -662,7 +662,7 @@ Alright, I am now satisfied that we have touched most of the bits in docker that
 
 ### docker run
 
-Time to run that fucking image.
+Time to run that fu**ing image.
 
 The first thing you could do is to run your container with a shell and faff about:
 
@@ -1142,7 +1142,7 @@ Examples:
 ...
 ```
 
-Absolutely fucking beautiful! 😍
+Absolutely fu**ing beautiful! 😍
 
 I love a CLI tool that goes out of its way to being helpful. kubectl has made a very good start. Not only is it telling me what I am missing but it goes one step further and provides me with examples.
 
@@ -1590,9 +1590,9 @@ http://192.168.64.2:31075
 >>> import requests
 >>> requests.post('http://192.168.64.2:31075/api/ali/run/', json={'input': '5+5'}).json()
 {'output': '10\n'}
->>> Fucking awesome!
+>>> Fu**ing awesome!
 File "<stdin>", line 1
-    Fucking awesome
+    Fu**ing awesome
             ^
 SyntaxError: invalid syntax
 ```

@@ -4,11 +4,11 @@
 
 ## Introduction
 
-This is more-or-less a writeup of a 3-hour workshop we ran at PyConUK2019. The workshop was well received & we wanted to expand on it. Then COVID happened and so we thought we will writeup our thing and put it here as a tutorial.
+This is more or less a write-up of a 3-hour workshop we ran at PyConUK2019. The workshop was well-received & we wanted to expand on it. Then COVID happened and so we thought we will write up our thing and put it here as a tutorial.
 
 ### Background
 
-Given that this tutorial started as a workshop, it is quite hands-on. You will not find many block diagrams in here. You might not find a lot of paragraphs either.
+Given that this tutorial started as a workshop, it is quite hands-on. You will not find many block diagrams here. You might not find a lot of paragraphs either.
 
 In a workshop you learn:
 
@@ -29,7 +29,7 @@ This tutorial is squarely aimed at beginners and it is not very ambitious. After
 - Describe the Kubernetes API to their colleagues
 - Demonstrate `kubectl` for interacting with the Kubernetes API
 
-This thing took 3 intense hours to run as a workshop. Given that this is now a writeup, it might take you longer. Take your time. Take regular breaks. Also take weird segways. Break things. Tear them apart to see how they work. You can always put it back together. Its just software.
+This thing took 3 intense hours to run as a workshop. Given that this is now a write-up, it might take you longer. Take your time. Take regular breaks. Also, take weird Segways. Break things. Tear them apart to see how they work. You can always put it back together. It's just software.
 
 ### Requirements
 
@@ -41,11 +41,11 @@ Before you get started, make sure you have installed the following on your syste
 
 ### Hello World API in Python
 
-Lets start with a very simple Hello World API in Python. We will be using Flask.
+Let's start with a very simple Hello World API in Python. We will be using Flask.
 
 For those who do not know, Flask is a minimal web framework for Python. The examples in this book will use Flask. In case you are not familiar with Python or Flask, we will walk you through the code. It should be pretty simple and easy to follow.
 
-Following is the code for our simple Hello World web application in Flask followed by a line-by-line walk through.
+Following is the code for our simple Hello World web application in Flask followed by a line-by-line walkthrough.
 
 
 ```python
@@ -66,17 +66,17 @@ def hello():
 4 - Create an object for our web application. `__name__` in Python is bound to the name of the current module which is based on the file name. For this case, the name of our file is `hello.py` so the name of
 our module would be "hello".
 
-6 - This is a decorator. In Python decorators are used to hold code that sandwich the code in a function. Decorators are used to annotate functions. For instance, in the following line, we are saying that the hello function should be called whenever the root URL in our web application is hit.
+6 - This is a decorator. In Python, a decorator is code that sandwiches the code in a function. Decorators are used to annotate functions. For instance, in the following line, we are saying that the hello function should be called whenever the root URL in our web application is hit.
 
 7 - This is how you define a function in Python. Our function returns the famous "Hello World" string.
 Like we said the code in the decorator sandwiches the code in our function. We also said that the toast at the top of our sandwich essentially passes control to our function whenever the root of our web application is hit. The toast at the bottom of the sandwich takes whatever the function returns and passes it back to the client that hit the root of our web application.
 
 
-In order to run this fun little application, we can do the following:
+To run this fun little application, we can do the following:
 
 Firstly, we need to install flask. In Python, this is done using pip - which is the Python package manager with a name that Bell Labs would be proud of:  PIP Installs Packages.
 
-We can totally install Flask using pip and get on with the rest of it but that would mean Flask would end up in our global Python packages space.
+We can install Flask using pip and get on with the rest of it but that would mean Flask would end up in our global Python packages space.
 
 ```console
 $ pip install flask
@@ -95,11 +95,11 @@ This is fine. Sometimes. But if you are doing a bunch of work in Python, you wou
 
 The thing that solves this problem is called virtual environments or venv in the Python world.
 
-Virtual environments are cool because they let you install packages on a per-project bases without polluting your global Python installation. Virtual environments are also cool because they come built-in with Python 3.
+Virtual environments are cool because they let you install packages on per-project bases without polluting your global Python installation. Virtual environments are also cool because they come built-in with Python 3.
 
 Did I tell you that we will be using Python 3 in this book? Let me use this opportunity to remind you that Python 2 officially hit its end of life in April 2020  👻
 
-So firstly, lets create a virtual environment for our little Hello World project. You can do it like so:
+So firstly, let's create a virtual environment for our little Hello World project. You can do it like so:
 
 ```console
 $ python -m venv ~/<path-to-the-virtual-environment>
@@ -143,7 +143,7 @@ lrwxr-xr-x  1 alixedi  staff    22 Jul 31 13:01 python3 -> /usr/local/bin/python
 
 We can spot the whole cast in there including the python binary and pip.
 
-Now in order to "activate" this virtual environment, we have - the activate script. Did you spot that in the last code snippet? Well done 👏
+Now to "activate" this virtual environment, we have - the activate script. Did you spot that in the last code snippet? Well done 👏
 
 Here is how you activate a virtual environment:
 
@@ -166,14 +166,14 @@ Installing collected packages: MarkupSafe, Jinja2, Werkzeug, click, itsdangerous
 Successfully installed Jinja2-2.11.2 MarkupSafe-1.1.1 Werkzeug-1.0.1 click-7.1.2 flask-1.1.2 itsdangerous-1.1.0
 ```
 
-In order to check if our virtual environment is doing what it said on the tin. Or what I said on the tin:
+To check if our virtual environment is doing what it said on the tin. Or what I said on the tin:
 
 ```console
 (k8s) $ which python
 ~/.venv/k8s/bin/python
 ```
 
-To double check:
+To double-check:
 
 ```console
 (k8s) $ python
@@ -190,7 +190,7 @@ SyntaxError: invalid syntax
 
 (Sorry again)
 
-One final check. Installing flask in a venv would mean that its is not available globally:
+One final check. Installing flask in a venv would mean that it is not available globally:
 
 ```console
 (k8s) $ deactivate
@@ -206,11 +206,11 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'flask'
 ```
 
-ModuleNotFoundError. Music to me ears  🕺
+ModuleNotFoundError. Music to my ears  🕺
 
 Onwards. Flask. Web application.
 
-We wrote ourselves an exciting little application in Flask. We should totally run it. Here is how:
+We wrote ourselves an exciting little application in Flask. We should run it. Here is how:
 
 ```console
 (k8s) $ FLASK_APP=hello.py flask run
@@ -222,7 +222,7 @@ We wrote ourselves an exciting little application in Flask. We should totally ru
 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 ```
 
-Looks promising. Lets see if it works. In a different terminal:
+Looks promising. Let's see if it works. In a different terminal:
 
 ```python
 $ curl localhost:5000
@@ -239,19 +239,19 @@ Before I move to containers and specifically Docker containers, I want to press 
 
 So doing a pip install <awesome-package> is nice and all for development but what if you want to distribute your application?
 
-Wait what? We just cobbled together a Hello World and now we are distributing it? What exactly is distribute anyway? Why is it cool?
+Wait, what? We just cobbled together a Hello World and now we are distributing it? What exactly is "distribute" anyway? Why is it cool?
 
-Well, I agree that our little Hello World thing is not going to get into ycombinator or anything but its still a fully functional - albeit dumb - web application.
+Well, I agree that our little Hello World thing is not going to get into ycombinator or anything but it's still a fully functional - albeit dumb - web application.
 
 The thing with web applications - like all applications - is that they need to be chucked around fairly often. For instance:
 
-1. You might want to put our Hello World application in a code repository like GitHub. Every time someone in your team adds a little feature to it, you might want to run some tests using e.g. GitHub actions. This is called Continuous Integration (CI) and it's all the rave. Now in order to run tests on your application, GitHub actions would need to be able to easily install it - along with all its dependencies no?
+1. You might want to put our Hello World application in a code repository like GitHub. Every time someone in your team adds a little feature to it, you might want to run some tests using e.g. GitHub actions. This is called Continuous Integration (CI) and it's all the rave. Now to run tests on your application, GitHub actions would need to be able to easily install it - along with all its dependencies no?
 
-2. Once you have them features working, you might want to release the latest version of your application to your users. Generally, for web applications, this would mean putting them on a server. Same story here. On the server you would need to reproduce the environment that your web application needs in order to run. AKA install.
+2. Once you have the features working, you might want to release the latest version of your application to your users. Generally, for web applications, this would mean putting them on a server. Same story here. On the server, you would need to reproduce the environment that your web application needs to run. AKA install.
 
-3. You got 2 new junior engineers on your team. They need to quickly and easily be able to run your massively complex Hello World application on their local machine in order to build new features and get you that VC 💰
+3. You got 2 new junior engineers on your team. They need to quickly and easily be able to run your massively complex Hello World application on their local machine to build new features and get you that VC 💰
 
-Luckily, pip has a trick or two up its sleeve that lets us reproduce the environment needed by our web application in order to run.
+Luckily, pip has a trick or two up its sleeve that lets us reproduce the environment needed by our web application to run.
 
 We can do this in 2 easy steps.
 
@@ -270,7 +270,7 @@ Werkzeug==1.0.1
 
 This gives us a list of all the dependencies and their correct versions that are installed in our virtual environment right now.
 
-Lets put these in a file like so:
+Let's put these in a file like so:
 
 ```console
 (k8s) $ pip freeze > requirements.txt
@@ -340,15 +340,15 @@ drwxr-xr-x   8 alixedi  staff   256B Jul 31 13:09 Werkzeug-1.0.1.dist-info
 
 ```
 
-Its kind of like a sandbox. Sandboxes are a cool idea. Like most cool ideas, the sandbox idea increases in awesomeness if we turn it all the way up to 10.
+It's kind of like a sandbox. Sandboxes are a cool idea. Like most cool ideas, the sandbox idea increases in awesomeness if we turn it up to 10.
 
-This is what containers do. Well not all the way up to 10. That would be virtual machines. Maybe all the way to 8.
+This is what containers do. Well, not up to 10. That would be virtual machines. Maybe to 8.
 
-First, lets talk about why.
+First, let's talk about why.
 
-While putting the packages that our application needs (aka dependencies) to run in a directory so that we can distribute our application easily has been really cool.
+While putting the packages that our application needs (aka dependencies) to run in a directory so that we can distribute our application easily has been cool.
 
-But we are still in a half-way house here.
+But we are still in a halfway house here.
 
 You see the copy of the python binary we spotted in the bin folder in our virtual environment still needs a bunch of operating system libraries to run. If you are running a Linux machine, you can observe this like so:
 
@@ -372,7 +372,7 @@ access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
 ```
 
-So while the Python virtual environment provides nice isolation within the Python universe, it is still relies on being able to make a bunch of calls to operating system libraries (syscalls) that are not bundled inside the virtual environment.
+So while the Python virtual environment provides nice isolation within the Python universe, it still relies on being able to make a bunch of calls to operating system libraries (syscalls) that are not bundled inside the virtual environment.
 
 Not quite a sandbox then is it?
 
@@ -386,14 +386,14 @@ Containers provide a sandbox for your process to run in. This sandbox is to Pyth
 
 Specifically:
 
-- Containers provides file system isolation. A process running in a container cannot access the file system outside of the container.
+- Containers provide file system isolation. A process running in a container cannot access the file system outside of the container.
 - Containers provide memory and CPU usage isolation. A process running in a container can only access the memory and CPU that has been assigned to it.
-- Container provide namespace isolation i.e. network, process IDs, hostnames, users etc.
+- Containers provide namespace isolation i.e. network, process IDs, hostnames, users etc.
 - Containers provide security. A process running in a container can only do what it has been permitted to do.
 
-Finally, Docker is a type of a container. The most popular one no less. It also comes with a bunch of nice-to-haves which makes it easy for beginners.
+Finally, Docker is a type of container. The most popular one no less. It also comes with a bunch of nice-to-haves which makes it easy for beginners.
 
-Enough talk. Lets create our first container. Who is excited?  ✋
+Enough talk. Let's create our first container. Who is excited?  ✋
 
 The first thing we need to do is to write the Docker equivalent of our requirements.txt file i.e. a file that lay out what would go into our container. Standard naming convention dictates that we call this file Dockerfile.
 
@@ -407,17 +407,17 @@ RUN pip install -r requirements.txt
 
 ```
 
-1 - Every docker container has a base image (More on images in the following paras). It is specified using the FROM keyword on the first line of the Dockerfile. Python.org conveniently publishes a bunch of base images that we can use to run Python applications. We are using the python base image with the tag `alpine`. This would give us a Python environment running on Alpine Linux - a light-weight distribution that is popular in the container world.
+1 - Every docker container has a base image (More on images in the following paras). It is specified using the FROM keyword on the first line of the Dockerfile. Python.org conveniently publishes a bunch of base images that we can use to run Python applications. We are using the python base image with the tag `alpine`. This would give us a Python environment running on Alpine Linux - a lightweight distribution that is popular in the container world.
 
 2 - This copies our files to the root of our container.
 
-3 - This is pretty standard pip and we have already covered it. The only interesting thing here is that we are choosing not to use venv. We totally can but it will be like running an environment inside a more awesome environment so no need.
+3 - This is a pretty standard pip and we have already covered it. The only interesting thing here is that we are choosing not to use venv. We totally can but it will be like running an environment inside a more awesome environment so no need.
 
 The attentive reader might ask:
 
 Hang on a minute, we are moving straight to requirements.txt
 
-What happened to being able to create a virtual environment by running:
+What happened to be able to create a virtual environment by running:
 
 ```console
 $ python -m venv ~/.venvs/k8s
@@ -439,7 +439,7 @@ To which, the clever 🙇 writer would say:
 
 Docker has its own opinions on sandboxes, how they should be built and how processes should be run inside them.
 
-Some of these opinions are informed by the difference in nature of a docker sandbox to a Python venv sandbox.
+Some of these opinions are informed by the difference in nature between a docker sandbox to a Python venv sandbox.
 
 The clever writer would then move on swiftly to Docker concepts and hope that the analogy with Python venv has caused more good than harm.
 
@@ -453,7 +453,7 @@ What is a Docker image?
 
 It is a tarball that contains all the dependencies needed to run your application.
 
-The act of building a Docker image, among other things, downloads these dependencies from the inter webs onto your machine.
+The act of building a Docker image, among other things, downloads these dependencies from the interwebs onto your machine.
 
 How do you build a docker image?
 
@@ -507,7 +507,7 @@ Removing intermediate container 9527747772b7
 Successfully built 1ddb10e93851
 ```
 
-I have put new lines in the snippet above to distinguish the various steps that were needed for building our docker image.
+I have put newlines in the snippet above to distinguish the various steps that were needed for building our docker image.
 
 An attentive reader would notice that the steps correspond to the lines in the Dockerfile. Well done attentive reader. Hold that thought. We will revisit this pretty soon.
 
@@ -528,7 +528,7 @@ The python image sort of makes sense. I specified it as a base image in my Docke
 
 But what about MY image? It doesn't seem to have a REPOSITORY (seems like a name) or a TAG. And what is even a tag anyway?
 
-Lets answer these questions by running the following bit of command-line:
+Let's answer these questions by running the following bit of command line:
 
 ```console
 $ docker image tag 1ddb10e93851 hello:v1
@@ -540,19 +540,19 @@ python              alpine              872c3118ec53        2 days ago          
 
 Much better.
 
-Except next time, we could bundle up the naming and tagging in the build command itself:
+Except for next time, we could bundle up the naming and tagging in the build command itself:
 
 ```console
 $ docker build --tag hello:v1 .
 ```
 
-Now that we know HOW to name and tag our images, its probably useful to understand WHY.
+Now that we know HOW to name and tag our images, it's probably useful to understand WHY.
 
 One popular WHY is versions. Learn to take a hint? hello:v1  😉
 
-Imagine a world where every time you release a new version of your app, you build an image and push it to an image-store of sorts.
+Imagine a world where every time you release a new version of your app, you build an image and push it to an image store of sorts.
 
-You would need someway to differentiate hello 1.0 with hello 2.0.
+You would need some way to differentiate hello 1.0 from hello 2.0.
 
 One way to do it would be to name the images hello1 and hello2 respectively.
 
@@ -564,15 +564,15 @@ You can also assign multiple tags to an image.
 
 For instance, imagine you test your application in a staging environment before promoting it to production. In this case, it is common to tag the image as staging when it is published. Once you are happy that the thing works, you can assign a production tag to it.
 
-P.S. Assigning staging and production tags wouldn't automatically deploy your application to staging and production environment respectively. There is a missing piece here. We will come back to it when we talk about Kubernetes.
+P.S. Assigning staging and production tags wouldn't automatically deploy your application to the staging and production environment respectively. There is a missing piece here. We will come back to it when we talk about Kubernetes.
 
 ### Repositories
 
-I started on this spiel of names and tags; Conveniently ignoring a small but important detail: There is no name. Its actually repository. Its time we smooth this out.
+I started on this spiel of names and tags; Conveniently ignoring a small but important detail: There is no name. It's a repository. It's time we smooth this out.
 
-Now that we know how to build an image, its time to revisit why we started on this path in the first place. We wanted some way to distribute our application in a reproducible way.
+Now that we know how to build an image, it's time to revisit why we started on this path in the first place. We wanted some way to distribute our application in a reproducible way.
 
-Building an images is a strong start but that doesn't quite solve the distribute bit. This is where repositories come in. A repository is a central store for your images. There are several options but for the purpose of learning about repositories, we would run with dockerhub.
+Building an image is a strong start but that doesn't quite solve the "distribute" bit. This is where repositories come in. A repository is a central store for your images. There are several options but to learn about repositories, we would run with Dockerhub.
 
 Go make an account at Dockerhub. While you are at it, also create a new repository. You can call it hello.
 
@@ -603,19 +603,19 @@ With a sensible combination of repositories, tags, dockerhub, push and pull, you
 
 Phew.
 
-But also I realise that we haven't actually run the damned thing yet!
+But also I realise that we haven't run the damned thing yet!
 
 ### Layers
 
 We could run it now but I am inclined to shamelessly double down on the BS and introduce one more concept before that.
 
-This one has been there all along. Looming in the shadows. I have been  trying to hold off explaining it. Until now. I am left with no choice. Sorry.
+This one has been there all along. Looming in the shadows. I have been trying to hold off explaining it. Until now. I am left with no choice. Sorry.
 
 Each instruction in a Dockerfile produces a layer. This layer is a diff of changes in the filesystem from the previous layer. A docker image is a stack of these layers.
 
 One more thing: All the commands produce layers but except for FROM, COPY and RUN, the layers are intermediate. Intermediate layers are squashed in the resulting image.
 
-Finally, how can I inspect these layers? Lets do that now. Break the COPY statement in your Dockerfile:
+Finally, how can I inspect these layers? Let's do that now. Break the COPY statement in your Dockerfile:
 
 ```console
 FROM python:alpine
@@ -630,7 +630,7 @@ Build a new version of the image:
 $ docker build -t hello:v2 .
 ```
 
-In order to inspect the layers:
+To inspect the layers:
 
 ```console
 $ docker history hello:v2
@@ -664,7 +664,7 @@ Alright, I am now satisfied that we have touched most of the bits in docker that
 
 Time to run that fucking image.
 
-First thing you could do is to run your container with a shell and faff about:
+The first thing you could do is to run your container with a shell and faff about:
 
 ```console
 $ docker run --interactive --tty hello:v1 sh
@@ -701,7 +701,7 @@ dr-xr-xr-x  144 root     root             0 Aug  7 13:16 proc
 ..
 ```
 
-I see them files and I cannot resist:
+I see the files and I cannot resist:
 
 ```console
 # FLASK_APP=hello.py flask run &
@@ -724,7 +724,7 @@ b'Hello World!\n'
 
 There it is 😅
 
-Now we just want to lift up whatever we did in that container to get our little app running. Here is a decent first go:
+Now we just want to lift whatever we did in that container to get our little app running. Here is a decent first go:
 
 ```console
 $ docker run hello:v1 sh -c "FLASK_APP=hello.py flask run"
@@ -743,12 +743,12 @@ $ curl localhost:5000
 curl: (7) Failed to connect to localhost port 5000: Connection refused
 ```
 
-There are 2 bits missing here I suspect:
+2 bits are missing here I suspect:
 
 1. The host should not be able to access the [localhost](http://localhost) for a container. This can be easily fixed by running our app on 0.0.0.0
 2. We need some way to forward a port from our host to the container.
 
-Lets see if you can find out how to map ports from the host to the container?
+Let's see if you can find out how to map ports from the host to the container?
 
 ```console
 $ docker run --help | grep port
@@ -775,7 +775,7 @@ Hello World!
 
 Now then 🚀
 
-I am taking it as a win but lets be honest. This is a bit of a mouthful:
+I am taking it as a win but let's be honest. This is a bit of a mouthful:
 
 ```console
 $ docker run -p 5000:5000 hello:v1 sh -c "FLASK_APP=hello.py flask run -h 0.0.0.0"
@@ -785,7 +785,7 @@ I wonder if we could do something about it?
 
 ### Dockerfile
 
-Turns out we could. Remember that old Dockerfile? Yup. You can totally move a bunch of things in this tedious command line into the Dockerfile.
+Turns out we could. Remember that old Dockerfile? Yup. You can move a bunch of things in this tedious command line into the Dockerfile.
 
 For starters, you could set environment variables. In addition, you could also specify the command to run when a container is spawned.
 
@@ -799,7 +799,7 @@ ENV FLASK_APP=/hello.py
 CMD ["flask", "run", "-h", "0.0.0.0"]
 ```
 
-Lets build and run this baby:
+Let's build and run this baby:
 
 ```console
 $ docker build -t hello:v3 .
@@ -817,15 +817,15 @@ Hello World!
 
 I hope this was fun.
 
-We started with a little Hello World application in Python, introduced Python's virtual environment to make our application **reproducible** and **distributable** (I am actually surprised this is a word).
+We started with a little Hello World application in Python and introduced Python's virtual environment to make our application **reproducible** and **distributable** (I am surprised this is a word).
 
 We then ventured into containers, specifically Docker. We touched upon docker images and how to build them. Finally, we talked about how to run our application inside docker containers.
 
-Using a Hello World application was a bit of a necessity because we wanted complete attention on the container and not what was running inside it. I think we managed to do that but we do not intend to keep at it.
+Using a Hello World application was a bit of a necessity because we wanted complete attention to the container and not what was running inside it. I think we managed to do that but we do not intend to keep at it.
 
 ### A new API: Python web console
 
-For the rest of this book, we want to work on with a proper, real-world (ish) application. This would require some investment e.g. digression into Python nitty gritty. We hope that this investment will pay dividends in your understanding and confidence when it comes to apply things that you learn here to your own projects.
+For the rest of this book, we want to work on a proper, real-world (ish) application. This would require some investment e.g. digression into Python nitty-gritty. We hope that this investment will pay dividends in your understanding and confidence when it comes to applying things that you learn here to your projects.
 
 Here we are then. We spent a lot of time trying to choose an application that would allow us to exercise most of the important bits in Kubernetes. We chose to build an interactive Python web console - A webpage that lets users type and run arbitrary Python code.
 
@@ -836,11 +836,11 @@ There are plenty of examples of this in the wild:
 * [Google Colab](https://colab.research.google.com/)
 * [Python's homepage](https://www.python.org/)
 
-Jupyterhub, for instance, is open source software. You can install and run it locally. It looks like this:
+Jupyterhub, for instance, is open-source software. You can install and run it locally. It looks like this:
 
 ![](assets/images/jupyter.png)
 
-Making an interactive Python web console might sounds complicated but we will be doing it one step at a time and we get a nice helping hand from Python:
+Making an interactive Python web console might sound complicated but we will be doing it one step at a time and we get a nice helping hand from Python:
 
 ```python
 from code import InteractiveConsole
@@ -862,7 +862,7 @@ Hello World
 3
 ```
 
-We can easily combine this with our Docker hello world example and we have a (multi-user) interactive web console. The following little mini application can actually build with the same docker file from the previous chapter:
+We can easily combine this with our Docker hello world example and we have a (multi-user) interactive web console. The following little mini-application can build with the same docker file from the previous chapter:
 
 ```python
 import code
@@ -910,7 +910,7 @@ def crash():
 signal.signal(signal.SIGTERM, lambda *args: sys.exit(0))
 ```
 
-Ok, you got me there. I was lying, this is not a full web app. We won't actually build the front end, just the JSON api which would power it. We think that this would be enough for the purpose of learning Kubernetes.
+Ok, you got me there. I was lying, this is not a full web app. We won't build the front end, just the JSON API which would power it. We think that this would be enough to learn Kubernetes.
 
 Let's wrap this in an image and run it. You can use the last Dockerfile for this. Just replace `hello.py` with `webconsole.py`:
 
@@ -929,23 +929,23 @@ print(requests.post(
 ).json())
 ```
 
-Of course this is far too simple. As always with development, having a proof of concept, is nothing compared to actually creating something you can run on production. Not to mention: you are allowing anyone to run any code on your servers! I'm sure that if you leave this running for a day, your application pissed of a lot of all of your users, and someone managed to get access to your server.
+Of course, this is far too simple. As always with development, having a proof of concept is nothing compared to creating something you can run on production. Not to mention: you are allowing anyone to run any code on your servers! I'm sure that if you leave this running for a day, someone will manage to get access to your server.
 
 ![](assets/images/its-fine.jpeg)
 
-As this book is about Kubernetes we will address most of these issue with Kubernetes. We will introduce you to everything you need to run most applications on Kubernetes, and even use some of it's advanced features.
+As this book is about Kubernetes we will address most of these issues with Kubernetes. We will introduce you to everything you need to run most applications on Kubernetes, and even use some of its advanced features.
 
 ## Kubernetes
 
 ### Introduction
 
-When I started writing this in my head, I decided that I will not go into too much details about the why of Kubernetes.
+When I started writing this in my head, I decided that I will not go into too many details about the why of Kubernetes.
 
 You - the reader - are reading this tutorial so it is a fair assumption on my part that you have figured out your whys, and they are all lined up like:  🦆 🦆 🦆
 
-On the other hand, having just written the chapter on Docker, half of which - to be honest - was expanding on why, I feel uncomfortable in stopping short of putting down something on the why of Kubernetes.
+On the other hand, having just written the chapter on Docker, half of which - to be honest - was expanding on why I feel uncomfortable in stopping short of putting down something on the why of Kubernetes.
 
-I feel that my main job, as an author, is to get the readers excited about something because lets face it: Excitement leads to motivation. Motivation leads to action. Action lead to Stack Overflow. which does a far better job of solving any specific issues that you might run into during the course of your actions.
+I feel that my main job, as an author, is to get the readers excited about something because let's face it: Excitement leads to motivation. Motivation leads to action. Action leads to Stack Overflow. which does a far better job of solving any specific issues that you might run into.
 
 There are two possible whys of Kubernetes.
 
@@ -953,11 +953,11 @@ There are two possible whys of Kubernetes.
 
 You work at a company that has implemented some kind of microservices architecture. Possibly, promulgating an engineering culture where the respective teams oversee particular features of the broader application from conception, design, development, all the way into production.
 
-You are a junior developers hired because you traversed that f**king binary tree on the whiteboard in 5 minutes of sharpie-ballet. Well done for the gumption to read CTCI. Twice. Now that you are in, you want to get cracking.
+You are a junior developer hired because you traversed that f**king binary tree on the whiteboard in 5 minutes of sharpie-ballet. Well done for the gumption to read CTCI. Twice. Now that you are in, you want to get cracking.
 
 Your CTO - in his/her infinite wisdom - have chosen to use Kubernetes to orchestrate all those microservices.
 
-Orchestrate is a word that is used often to describe Kubernetes. Lets nail down what that means before we move on with the rest of our story.
+Orchestrate is a word that is used often to describe Kubernetes. Let's nail down what that means before we move on with the rest of our story.
 
 ![](assets/images/orchestra.png)
 
@@ -975,13 +975,13 @@ This abstraction is called Service Discovery. Kubernetes provides it out of the 
 
 ##### Load Balancing
 
-So Big Corp has launched this awesome new product. They marketed it till the cows came home and now its time to launch.
+So Big Corp has launched this awesome new product. They marketed it till the cows came home and now it's time to launch.
 
 What do you think would happen?
 
 I would reckon a bunch of people would pop in because of the marketing until they find out that the awesome new product is shit.
 
-Big Corp know this too.
+Big Corp knows this too.
 
 But even with the shitty product, they would not want the embarrassment of being brought down by a TechCrunch article.
 
@@ -995,23 +995,23 @@ When you do choose to scale your cluster, Kubernetes will automatically create n
 
 You can also specify the amount of CPU and RAM each container needs and Kubernetes would be happy to take that into account while bin-packing.
 
-Finally, Kubernetes takes care of the container health. It replaces the ones that fail a user-defined health check, taking care of not announcing them until they are ready etc.
+Finally, Kubernetes takes care of the container's health. It replaces the ones that fail a user-defined health check, taking care of not announcing them until they are ready etc.
 
 ##### Automated rollouts and rollbacks
 
-Finally, hopefully, someone would realize that the first version of awesome product was shit. At which point, they will iron out some of the bugs, rework some features etc. and try to push out a new release.
+Finally, hopefully, someone would realize that the first version of the awesome product was shit. At which point, they will iron out some of the bugs, rework some features etc. and try to push out a new release.
 
-I have worked at companies where a release was like a ceremony. Someone would actually set out to do it and 3 days later, everyone will get a slice of cake.
+I have worked at companies where a release was like a ceremony. Someone would set out to do it and 3 days later, everyone will get a slice of cake.
 
-The advent of DevOps have meant many things to many people but for me, it means no cake. The releases are no longer like Christmas and more like Wednesdays.
+The advent of DevOps has meant many things to many people but for me, it means no cake. The releases are no longer like Christmas and more like Wednesdays.
 
-There is nothing exciting about it. Its just a day that comes around every week.
+Nothing is exciting about it. It's just a day that comes around every week.
 
-In some companies releases are more like coffee breaks  🤷‍♂️
+In some companies, releases are more like coffee breaks  🤷‍♂️
 
 From my experience in such companies, it was often Kubernetes that made this happen.
 
-It comes out of the box with the tools you need to rollout releases - and in case a release doesn't work, roll it back.
+It comes out of the box with the tools you need to roll out releases - and in case a release doesn't work, roll it back.
 
 #### Startup Kubernetes
 
@@ -1023,31 +1023,31 @@ How about you work at a startup that is trying to find a product-market fit by d
 
 Why would you want to use Kubernetes?
 
-Funny enough, I first came upon Kubernetes at such a startup. Our problem - like every other startup was optimizing the infrastructure costs to try and get the maximum bang our buck.
+Funny enough, I first came upon Kubernetes at such a startup. Our problem - like every other startup was optimizing the infrastructure costs to try and get the maximum bang for our buck.
 
-This lead us towards services.
+This leads us towards services.
 
-Not because we had a million teams and services was the only way to stop them from treading on toes.
+Not because we had a million teams and services were the only way to stop them from treading on toes.
 
 Not because of resume-driven development.
 
 ![](assets/images/startup.png)
 
-We split our API into 2 services because we had endpoints with drastic variance in load characteristics. The only way to utilize our infrastructure efficiently was to put these endpoints on different nodes.
+We split our API into 2 services because we had endpoints with drastic variances in load characteristics. The only way to utilize our infrastructure efficiently was to put these endpoints on different nodes.
 
-On top of that the demand for our service had huge variances. We wanted to be able to scale up when it was time to make money and scale down when we didn't have active customers.
+On top of that, the demand for our service had huge variances. We wanted to be able to scale up when it was time to make money and scale down when we didn't have active customers.
 
 Our cloud provider tried to sell us proprietary options but we didn't want a lock-in. We were on startup credits. As soon as the credits ran out, there was a possibility that we would move shop for cost efficiency.
 
-Finally, we were 2 engineers in total. We wanted all the good things - docker for reproducible and distributable artifacts, CI/CD and a high release cadence without locking down 50% of our engineering resources.
+Finally, we were 2 engineers in total. We wanted all the good things - docker for reproducible and distributable artefacts, CI/CD and a high release cadence without locking down 50% of our engineering resources.
 
 Kubernetes helped us do all of that and it can help you too.
 
-Lets run our thing on Kubernetes 🚀
+Let's run our thing on Kubernetes 🚀
 
 #### Set up
 
-In order to start on our adventure into the world of Kubernetes, we are going to install the awesome Minikube.
+To start on our adventure into the world of Kubernetes, we are going to install the awesome Minikube.
 
 Minikube will let you fiddle away at that Kubernetes cluster without having to pull out your wallet and spend your hard-earned AWS credits.
 
@@ -1064,10 +1064,10 @@ $ minikube start
 ...
 <bunch of downloads, might ask for password etc.>
 ...
-🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+🏄  Done! kubectl is now configured to use the "minikube" cluster and "default" namespace by default
 ```
 
-Following this, it might be prudent to point your docker cli to the docker daemon that is running inside the VM. Instead of the one that is running on your machine, outside the VM.
+Following this, it might be prudent to point your Docker CLI to the docker daemon that is running inside the VM. Instead of the one that is running on your machine, outside the VM.
 
 ```console
 $ eval $(minikube -p minikube docker-env)
@@ -1079,7 +1079,7 @@ Finally, some of the stuff we are about to do would be less of a mouthful if you
 $ alias minikube kubectl --=kubectl
 ```
 
-You are welcome! Lets get started.
+You are welcome! Let's get started.
 
 ### kubectl
 
@@ -1102,7 +1102,7 @@ Basic Commands (Beginner):
 ..
 ```
 
-Lots of interesting things under the ellipses but honestly, do we really feel like reading beyond **create**?
+Lots of interesting things under the ellipses but honestly, do we feel like reading beyond **create**?
 
 ```console
 $ kubectl create --help
@@ -1144,7 +1144,7 @@ Examples:
 
 Absolutely fucking beautiful! 😍
 
-I love a CLI tool that goes out of its way to be helpful. kubectl has made a very good start. Not only is it telling me what I am missing but it goes one step further and provides me examples.
+I love a CLI tool that goes out of its way to being helpful. kubectl has made a very good start. Not only is it telling me what I am missing but it goes one step further and provides me with examples.
 
 In the last chapter, we learned how to build an image. I would propose that you build one for our application right now.
 
@@ -1162,7 +1162,7 @@ zsh: command not found: woOt!
 
 It seems that we have succeeded in creating *something* called `deployment.apps/webconsole`.
 
-I can explain what a deployment is of we can take a step back and let `kubectl` help us explore the size and shape of what we have just done here.
+I can explain what a deployment is if we can take a step back and let `kubectl` help us explore the size and shape of what we have just done here.
 
 ```console
 $ kubectl
@@ -1184,7 +1184,7 @@ Basic Commands (Intermediate):
 
 The second block of Basic Commands sounds promising but more importantly, **Intermediate** already ****(!) LOL. I will be sad if this doesn't turn out to be a self-parody for tech careers.
 
-Explain seems to suggest documentation of some kind. Lets ask it about deployments shall we?
+Explain seems to suggest documentation of some kind. Let's ask it about deployments, shall we?
 
 ### Deployments, Pods etc.
 
@@ -1197,7 +1197,7 @@ DESCRIPTION:
      Deployment enables declarative updates for Pods and ReplicaSets.
 ..
 
-$ in plain english please
+$ in plain English, please
 zsh: command not found: in
 ```
 
@@ -1205,7 +1205,7 @@ I will step in at this point.
 
 Deployments in the Kubernetes universe is the layer that runs multiple replicas of your application. It is the thing that you can scale up or down. The thing that ensures that when an instance of your application goes down, it is replaced with a healthy instance.
 
-With that out of the way, the output of our kubectl explain deployment mentions 2 other things: Pods and ReplicaSets. Lets see if kubectl does a better job of explaining that these are:
+With that out of the way, the output of our kubectl explains deployment mentions 2 other things: Pods and ReplicaSets. Let's see if kubectl does a better job of explaining that these are:
 
 ```console
 $ kubectl explain pods
@@ -1219,11 +1219,11 @@ DESCRIPTION:
 
 Not bad but perhaps I can expand on this with an example.
 
-Often, an instance of application comprises of 2 or more containers. For instance, I recently built an app that needed to send some metrics to a Prometheus server. To cut a long story short, in order to do this, I needed to pair each container running my app with one [running StatsD exporter](https://github.com/prometheus/statsd_exporter#using-docker).
+Often, an instance of application comprises 2 or more containers. For instance, I recently built an app that needed to send some metrics to a Prometheus server. To cut a long story short, to do this, I needed to pair each container running my app with one [running StatsD exporter](https://github.com/prometheus/statsd_exporter#using-docker).
 
 **Pods** are the smallest deployable object in Kubernetes. A Pod can contain multiple containers. Kubernetes ensures that all the containers in a Pod are run on the same host, managed as a single entity and be able to share resources such as network and storage.
 
-Lets look at ReplicaSet:
+Let's look at ReplicaSet:
 
 ```console
 $ kubectl explain ReplicaSet
@@ -1235,7 +1235,7 @@ DESCRIPTION:
      any given time.
 ```
 
-**tl;dr** ReplicaSet sits between a Deployment and its Pods. ReplicaSet is how a deployment guarantee that the availability of specified number of application instances.
+**tl;dr** ReplicaSet sits between a Deployment and its Pods. ReplicaSet is how a deployment guarantees the availability of a specified number of application instances.
 
 As a user, we will generally deal with Deployments and Pods instead of ReplicaSets.
 
@@ -1251,7 +1251,7 @@ DESCRIPTION:
 ..
 ```
 
-Some sense is enough for now. Lets move on to the next interesting bit in our kubectl tour:
+Some sense is enough for now. Let's move on to the next interesting bit in our kubectl tour:
 
 ```console
 $ kubectl get
@@ -1287,7 +1287,7 @@ webconsole-5b559bf485   1         1         1       42m
 
 How cool is that?!
 
-We just ran our thing on a cluster and now we are querying the cluster and its telling us the nuts and bolts of how its running our thing.
+We just ran our thing on a cluster and now we are querying the cluster and it's telling us the nuts and bolts of how it's running our thing.
 
 So we now know that we have a Deployment running on a cluster with a ReplicaSet and a Pod. We kinda know what these terms mean. At least from a utilitarian perspective.
 
@@ -1306,7 +1306,7 @@ Basic Commands (Intermediate):
 label selector
 ```
 
-Delete is always interesting. If we are successful in deleting the stuff that we created, it will provided us with the opportunity to create it again. If we are successful a second time, it would mean we have something on our hands that is reproducible.
+Delete is always interesting. If we are successful in deleting the stuff that we created, it will provide us with the opportunity to create it again. If we are successful a second time, it would mean we have something on our hands that is reproducible.
 
 ```console
 $ kubectl delete deployment webconsole
@@ -1336,7 +1336,7 @@ NAME                          READY   STATUS    RESTARTS   AGE
 webconsole-5b559bf485-rtsk5   1/1     Running   0          5s
 ```
 
-We have something that is reproducible and not a ❄️
+We have something reproducible and not a ❄️
 
 ### Scaling
 
@@ -1351,7 +1351,7 @@ Deploy Commands:
   autoscale      Auto-scale a Deployment, ReplicaSet, or ReplicationController
 ```
 
-This is like the 3 most exciting things in Kubernetes. Lets start by exploring scale.
+This is like the 3 most exciting things in Kubernetes. Let's start by exploring scale.
 
 ```console
 $ kubectl scale
@@ -1368,7 +1368,7 @@ Examples:
   kubectl scale --current-replicas=2 --replicas=3 deployment/mysql
 ```
 
-I think I have a idea on how to do example #3 for our thing.
+I think I have an idea on how to do example #3 for our thing.
 
 I don't know about you but I ❤️ the examples. Not enough CLI tools have them IMO.
 
@@ -1413,9 +1413,9 @@ We still haven't figured out how to talk to our thing.
 
 You know - try and run arbitrary Python code for ourselves? Before we start running arbitrary Python code for millions of users 🤑
 
-Lets step back and take stock for what we have right now.
+Let's step back and take stock of what we have right now.
 
-We have a cluster. Sort of. We have Minikube. Its running a VM on our machine essentially. Inside that VM is a Kubernetes cluster.
+We have a cluster. Sort of. We have Minikube. It's running a VM on our machine essentially. Inside that VM is a Kubernetes cluster.
 
 We have - by now - figured out: How to deploy our application to a Kubernetes cluster. We have also managed to figure out how to scale our application.
 
@@ -1462,9 +1462,9 @@ on port 8000.
 
 ### Labels and Selectors
 
-Service selector service selector label resource blah blah blah blah..
+Service selector label resource blah blah blah blah..
 
-Lets break this down shall we?
+Let's break this down, shall we?
 
 ```console
 $ kubectl explain service
@@ -1478,11 +1478,11 @@ DESCRIPTION:
      the proxy.
 ```
 
-This is more like it. It seems like a Service is an abstraction over a Deployment that handles the comms between pods in a deployment and the rest of the world.
+This is more like it. It seems like a Service is an abstraction over a Deployment that handles the comms between pods in deployment and the rest of the world.
 
-Sounds simple. Except for the **selector -** The bit that links a service to the pods.
+Sounds simple. Except for the **selector -** The bit that links service to the pods.
 
-Lets use another kubectl subcommand to help us out here:
+Let's use another kubectl subcommand to help us out here:
 
 ```console
 $ kubectl describe deployment webconsole
@@ -1514,9 +1514,9 @@ Labels:       pod-template-hash=5b559bf485
 
 And our pod have a label that matches the selector.
 
-Let me explain. Its all quite simple really.
+Let me explain. It's all quite simple really.
 
-A Label is a key-value pairs that can be attached to any Kubernetes resource.
+A Label is a key-value pair that can be attached to any Kubernetes resource.
 
 A Selector is a string that selects a set of resources in a Kubernetes cluster based on their labels.
 
@@ -1526,7 +1526,7 @@ Back to the bit where we were trying to expose our application running inside a 
 
 ### Services
 
-Lets refer to the help and pay close attention to the Usage:
+Let's refer to the help and pay close attention to the Usage:
 
 ```console
 $ kubectl expose -h
@@ -1539,7 +1539,7 @@ Usage:
 
 You will notice the switch that specifies the service type.
 
-This needs a bit of an explainer. As we established earlier, a service is the abstraction that exposes a deployment to the rest of the world.
+This needs a bit of an explainer. As we established earlier, a service is an abstraction that exposes a deployment to the rest of the world.
 
 "Rest of the world" could mean different things depending on the situation at hand though.
 
@@ -1547,9 +1547,9 @@ For instance, you might be running a Web application as well as a Redis cache in
 
 "Rest of the world" for your web application would mean the internet.
 
-On the other hand, "Rest of the world" for the Redis cache should mean rest of the cluster. There is no reason to expose your Redis cache to the internet right?
+On the other hand, "Rest of the world" for the Redis cache should mean the rest of the cluster. There is no reason to expose your Redis cache to the internet, right?
 
-As it turn out, theses are the 2 types of services in Kubernetes that you should be aware of at this instant in time:
+As it turns out, there are the 2 types of services in Kubernetes that you should be aware of at this instant in time:
 
 1. **ClusterIP**: Exposes a Service inside the cluster.
 2. **LoadBalancer:** Exposes the Service outside the cluster.
@@ -1560,7 +1560,7 @@ Good question.
 
 See, while you can access your application from inside the cluster (we haven't quite got around to this yet but trust me), it will inevitably involve referring to resources (e.g. Pods) that are ephemeral.
 
-A service on the other hand provides a stable DNS that points to the right ephemeral resource so you don't have to.
+Service on the other hand provides a stable DNS that points to the right ephemeral resource so you don't have to.
 
 Back to service types. It seems we are looking for 2 at this moment.
 
@@ -1655,7 +1655,7 @@ webconsole-5b559bf485-q5rgq   0/1     CrashLoopBackOff   1          7d2h
 webconsole-5b559bf485-q5rgq   1/1     Running            2          7d2h
 ```
 
-P.S. Lookup the —watch switch. Very useful 🙂
+P.S. Look up the —watch switch. Very useful 🙂
 
 Right. Happy?
 
@@ -1675,13 +1675,13 @@ Type "help", "copyright", "credits" or "license" for more information.
 {'output': 'Traceback (most recent call last):\n  File "<console>", line 1, in <module>\nNameError: name \'a\' is not defined\n'}
 ```
 
-Now, can you figure out whats happening here and why?
+Now, can you figure out what's happening here and why?
 
-We found a bug. Nothing new there, unless you are the best developer on the world!
+We found a bug. Nothing new there, unless you are the best developer in the world!
 
-Let's assume we solved the issue. Now what? So far we can only created a deployment in kubernetes, delete it, or scale it. Deleting and recreating it doesn't feel right, who would bring down their application to update it?
+Let's assume we solved the issue. Now what? So far we can only create a deployment in Kubernetes, delete it, or scale it. Deleting and recreating it doesn't feel right, who would bring down their application to update it?
 
-Ok, fair enough, some companies do this, and sometimes it is needed. In a lot of cases, teams now prefer to update the application without anyone noticing. Can you imagine going to google.com and see:
+Ok, fair enough, some companies do this, and sometimes it is needed. In a lot of cases, teams now prefer to update the application without anyone noticing. Can you imagine going to google.com and seeing:
 
 ![](assets/images/down.png)
 
@@ -1710,7 +1710,7 @@ Advanced Commands:
 ...
 ```
 
-There are a lot of options here: set, apply, patch, replace... Some of them mention a file, which we don't know anything about. So lets check set and patch.
+There are a lot of options here: set, apply, patch, replace... Some of them mention a file, which we don't know anything about. So let's check set and patch.
 
 ```console
 $ kubectl set
@@ -1757,13 +1757,13 @@ image"}]'
 
 Kubectl set looks very limiting. But, if we update our application code, we have a new image and we could use this command to update the image, so why not?
 
-Kubectl patch looks very complicated, and you don't even know what you are merging (probably some "file"). It mentions that JSON and YAML formats are accepted, so maybe that is the format of the file mentioned earlier? In that case, we might as well pass in a file, as we don't really want to be typing JSON in the command line. Let's take a look at those "files", and see what the deal is.
+Kubectl patch looks very complicated, and you don't even know what you are merging (probably some "file"). It mentions that JSON and YAML formats are accepted, so maybe that is the format of the file mentioned earlier? In that case, we might as well pass in a file, as we don't want to be typing JSON in the command line. Let's take a look at those "files", and see what the deal is.
 
 ### Manifests
 
-When we used the commands in the previous chapter like create, scale, expose, they all create a document which they send to the kubernetes API. Everything in kubernetes from the a pod running you software, a deployment managing those pods (recreate crashed and other nice features), to exposing something on the network (a service) is an object. Each of those objects can be serialized to a document in either JSON or YAML. While the Kubernetes API works with JSON, for use humans 👽 kubectl translates this to and from YAML (or a nice little table), as this is way easier to read & write. You can always ask kubectl to give us JSON.
+When we used the commands in the previous chapter like create, scale, and expose, they all create a document that they send to the Kubernetes API. Everything in Kubernetes from the pod running your software, a deployment managing those pods (recreate crashed and other nice features), to exposing something on the network (a service) is an object. Each of those objects can be serialized to a document in either JSON or YAML. While the Kubernetes API works with JSON, for use humans 👽 kubectl translates this to and from YAML (or a nice little table), as this is way easier to read & write. You can always ask kubectl to give us JSON.
 
-Let's have a look at the what we actually send to Kubernetes with kubectl commands starting with our deployment:
+Let's have a look at what we send to Kubernetes with kubectl commands starting with our deployment:
 
 ```yaml
 $ kubectl create deployment webconsole --image webconsole:v1 \
@@ -1779,23 +1779,23 @@ spec: ...
 status: {}
 ```
 
-That's a lot of text! Luckily a lot of that is kind of redundant or even unrelevant. Let's break it down:
+That's a lot of text! Luckily a lot of that is kind of redundant or even not relevant. Let's break it down:
 
-The command: `kubectl create deployment webconsole` just says we want to create a deployment with the name webconsole, we then provide the some options like the image, and a port number. We finish it with `--dry-run=client -oyaml` which says two things: we don't want to actually create this object on cluster, and then we ask to see the actual object as YAML.
+The command: `kubectl create deployment webconsole` just says we want to create a deployment with the name webconsole, we then provide some options like the image and a port number. We finish it with `--dry-run=client -oyaml` which says two things: we don't want to create this object on the cluster, and then we ask to see the actual object as YAML.
 
-The `apiVersion` describes which api and version this uses, there is a core api, and in this case `apps`, an extension which exists for a long time now. This is also used to make user extensions for Kubernetes, which is out of scope for this book. Together with `kind`, the type of object, tell Kubernetes what to do this ball of text you threw at it.
+The `apiVersion` describes which API and version this uses, there is a core API, and in this case `apps`, an extension which exists for a long time now. This is also used to make user extensions for Kubernetes, which is out of scope for this book. Together with `kind`, the type of object, tell Kubernetes what to do with this ball of text you threw at it.
 
-The next 3 top level elements are also common to all Kubernetes objects: metadata, spec, status. They are exactly what they say they are.
+The next 3 top-level elements are also common to all Kubernetes objects: metadata, spec, status. They are exactly what they say they are.
 
 - Metadata adds names, labels, and other basic info.
-- Spec describes the actual object, and is different for every type.
+- Spec describes the actual object and is different for every type.
 - Status is used to store some status information, mostly for internal usage, but also very useful if you want to know what is going on.
 
 This might still feel very abstract. The name in metadata is used to point to a single object: gimme that deployment!
 
 Labels are used to address a group (more on that in just a moment): all of those idiots.
 
-The status is difficult to read, but luckily you have those tables from kubectl (`kubectl get deployment` for example), which summarize that, for example:
+The status is difficult to read, but luckily you have those tables from kubectl (`kubectl get deployment` for example), which summarize that for example:
 
 ```
 NAME         READY   UP-TO-DATE   AVAILABLE   AGE
@@ -1804,15 +1804,15 @@ webconsole   1/1     1            1           9s
 
 #### Why use Manifests
 
-I haven't even explained the bulk of all that text, and my throath is already dry from all the writing 😕. So let's talk why you should be happy about it, before you burn the book (and your laptop with it... ebooks are not so fun to light on fire).
+I haven't even explained the bulk of all that text, and my throat is already dry from all the writing 😕. So let's talk about why you should be happy about it before you burn the book (and your laptop with it... ebooks are not so fun to light on fire).
 
-A little bit of history. If you have been running your own stuff, you might have just manually logged into a box and installed stuff, made changes. If it's just you and one server and not to much stuff to run, that might be fine. That's also how bigger companies tried to do this. They might have documented stuff (which got out of date), used handy tools (which would run a command on several servers). Fancier deployments used some automation like shell scripts. You wrote scripts to tell the server **how** you wanted to **change** something, it might have checked for a condition to ensure you cloud also run the script on a clean server. This is called **imperative** for the nerds under us. This was usually quiet difficult, sometimes didn't work on a new server, crashed for some random temporary failure.
+A little bit of history. If you have been running your own stuff, you might have just manually logged into a box, installed things and made changes. If it's just you and one server and not too much stuff to run, that might be fine. That's also how bigger companies tried to do this. They might have documented stuff (which got out of date) and used handy tools (which would run a command on several servers). Fancier deployments used some automation like shell scripts. You wrote scripts to tell the server **how** you wanted to **change** something, it might have checked for a condition to ensure your cloud also run the script on a clean server. This is called **imperative** for the nerds under us. This was usually quite difficult, sometimes didn't work on a new server, and crashed for some random temporary failure.
 
-Newer tools, including Kubernetes, are **declaritive**. You tell the server, or with Kubernetes a cluster instead, **what** things should look like. Kubernetes will then see what it needs to do to make this happen, if anything needs to. Kubernetes usually goes a step further like you have seen in the previous chapter, it will try to keep everything as it should, not just when you ask it.
+Newer tools, including Kubernetes, are **declarative**. You tell the server, or with Kubernetes, a cluster instead, **what** things should look like. Kubernetes will then see what it needs to do to make this happen if anything needs to. Kubernetes usually goes a step further as you have seen in the previous chapter, it will try to keep everything as it should, not just when you ask it.
 
 And this is why we should probably use the `apply` command, you just send the same document with (minor) changes over, and Kubernetes will make it happen. This also makes code reviews easy, as YAML is pretty easy to review.
 
-While the document still looks a bit long, a lot of it is pretty straight forward, and once your familiar they don't feel difficult. You won't really write them from scratch as you will copy the output of a kubectl create command, copy little snippets from the documentation, or from your own code base. There are also tools to help you, we briefly touch on that in chapter <>.
+While the document still looks a bit long, a lot of it is pretty straightforward, and once you are familiar they don't feel difficult. You won't write them from scratch as you will copy the output of a kubectl create command, copy little snippets from the documentation, or your codebase. There are also tools to help you, we briefly touch on that in chapter <>.
 
 ### kubectl apply
 
@@ -1842,21 +1842,21 @@ spec:
 
 `replicas` declares how many pods you want to run, the `selector` declares how to find your already pods, the `strategy` how to update when you change something (like the image), and the `template` is the **template** (that explains a lot!) of your pods.
 
-The selector instructs the deployment to find existing pods by looking for pods with specific labels. Why, you ask? Kubernetes always tries to rely on the actual state, not the state it saved in memory or on disk. It could keep a list of pods belonging to a specific deployment, but what if one of them disappears. Remember, pods will only live as long as they run on the same server. If a pod misbehaves, and Kubernetes decided to kill it for everyones safety, the pod won't we relocated, but the deployment will create a new pod. The same will happen if the Node crashes, or get's restarted to update it's Kubernetes version.
+The selector instructs the deployment to find existing pods by looking for pods with specific labels. Why? you ask. Kubernetes always tries to rely on the actual state, not the state it saved in memory or on disk. It could keep a list of pods belonging to a specific deployment, but what if one of them disappears. Remember, pods will only live as long as they run on the same server. If a pod misbehaves, and Kubernetes decided to kill it for everyone's safety, the pod won't be relocated, but the deployment will create a new pod. The same will happen if the Node crashes, or gets restarted to update its Kubernetes version.
 
-In the template you find the same structure as the deployment, but apiVersion and kind is implied in this case. The metadata declares the same labels as the matchLabels in the selector, and the spec is something you would write for a pod. This one is straight forward: we have a list of containers which this pod should run with a name and an image. We also declare a port, and optionally give it a name. We do not declare any resources yet, that's something for later.
+In the template, you find the same structure as the deployment, but apiVersion and kind are implied in this case. The metadata declares the same labels as the matchLabels in the selector, and the spec is something you would write for a pod. This one is straightforward: we have a list of containers that this pod should run with a name and an image. We also declare a port and optionally give it a name. We do not declare any resources yet, that's something for later.
 
-The deployment also declares a update `strategy`, but it's empty. It uses the default strategy (the other one is not worth mentioning) called `RollingUpdate`, with the default options. Let's demonstrate this.
+The deployment also declares an update `strategy`, but it's empty. It uses the default strategy (the other one is not worth mentioning) called `RollingUpdate`, with the default options. Let's demonstrate this.
 
 ## Kubernetes Jobs
 
 ### Introduction
 
-We found a bug, and we know how to update our application in Kubernetes 🎉. Now we can actually go back to solving the issue, but we first need to understand our bug. If you haven't figured it out yourself, it would be good to have a try to do this yourself. We somehow created the bug by just scaling our application 🙀.
+We found a bug, and we know how to update our application in Kubernetes 🎉. Now we can go back to solving the issue, but we first need to understand our bug. If you haven't figured it out yourself, it would be good to have a try to do this yourself. We somehow created the bug by just scaling our application 🙀.
 
-I think you realized why this is happening. Don't worry if you don't, we will still explain it. As we now have more then one instance of the application, our requests land on one of those 4 instances. The kubernetes service acts as a load balancer, and we don't control which one. Our personal python interpreter is ofcourse only running on one of them. If it happens to land on the wrong one, our code won't execute 😿! On top of all that: we also can't control where our first request arrives, which means our scaling can be pretty useless. If all requests to create a new python interpreter lands on the same instance we still have have only one instance which holds all those interpreters🤦‍♀️!
+I think you realized why this is happening. Don't worry if you don't, we will still explain it. As we now have more than one instance of the application, our requests land on one of those 4 instances. The Kubernetes service acts as a load balancer, and we don't control which one. Our python interpreter is of course only running on one of them. If it happens to land on the wrong one, our code won't execute 😿! On top of all that: we also can't control where our first request arrives, which means our scaling can be pretty useless. If all requests to create a new python interpreter lands on the same instance we still have only one instance which holds all those interpreters 🤦‍♀️!
 
-Our python interpreters are essentially long running jobs, so let's treat it like that. Kubernetes actually has a Job payload. Isn't that convenient 🙃?
+Our python interpreters are essentially long-running jobs, so let's treat it like that. Kubernetes has a Job payload. Isn't that convenient 🙃?
 
 ### Kubernetes jobs
 
@@ -1917,11 +1917,11 @@ def run(uname):
 signal.signal(signal.SIGTERM, lambda *args: sys.exit(0))
 ```
 
-You will first notice we have split up starting the webconsole itself and actually running code on it. This is just for us to cheat, and simplify the code 🤫.  During the initialization of the webapp, we also create some new objects. At line 14 we initialize the kubernetes API and load the configuration from the cluster. The next 2 lines creates api clients, one for each `apiVersion` we use in the code.
+You will first notice we have split up starting the webconsole itself and running code on it. This is just for us to cheat, and simplify the code 🤫.  During the initialization of the web app, we also create some new objects. In line 14 we initialize the Kubernetes API and load the configuration from the cluster. The next 2 lines create API clients, one for each `apiVersion` we use in the code.
 
-The function at line 18 will make it possible to start a webconsole. To do this, we will use the normal YAML manifests we already seen before. In line 19 & 20 it is loaded and converted to a python object. Instead of sending this manifest as is, we treat it as a template! The job is given a name at line 21, and attach some labels to it at line 24. We can use these labels later to find back our running webconsole. The function finishes at line 29 by calling the Kubernetes API to create the job. This is call looks fairly similar to how it would work with kubectl.
+The function at line 18 will make it possible to start a webconsole. To do this, we will use the normal YAML manifests we have already seen before. In lines 19 & 20 it is loaded and converted to a python object. Instead of sending this manifest as is, we treat it as a template! The job is given a name at line 21, and attach some labels to it at line 24. We can use these labels later to find back our running webconsole. The function finishes at line 29 by calling the Kubernetes API to create the job. This call looks fairly similar to how it would work with kubectl.
 
-Let's have a look what the job template looks like:
+Let's have a look at what the job template looks like:
 
 ```yaml
 apiVersion: batch/v1
@@ -1935,13 +1935,13 @@ spec:
       restartPolicy: Never
 ```
 
-Most of this should look familiar. `restartPolicy` is new, and it basically tells kubernetes to not automatically restart the pod when it stops, and is required for jobs. Jobs will automatically create a new pod, depending on some conditions, and the normal restarting will just mess that up.
+Most of this should look familiar. `restartPolicy` is new, and it tells Kubernetes to not automatically restart the pod when it stops and is required for jobs. Jobs will automatically create a new pod, depending on some conditions, and the normal restarting will just mess that up.
 
-Running code on the created webconsole is fairly simple. At line 44 we lookup the running webconsole by the labels. The function then just acts as a proxy between the running webconsole and the client by using requests at line 47. And that's all the code. Let's recover from that...
+Running code on the created webconsole is fairly simple. On line 44 we look up the running webconsole by the labels. The function then just acts as a proxy between the running webconsole and the client by using requests at line 47. And that's all the code. Let's recover from that...
 
 ![](assets/images/exhausted.jpeg)
 
-No that we recoverd, let's build the image. Finally we have our first scalable application running on Kubernetes! All we need is some extra packages in our requirements.txt:
+Now that we have recovered, let's build the image. Finally, we have our first scalable application running on Kubernetes! All we need is some extra packages in our requirements.txt:
 
 ```yaml
 kubernetes
@@ -1953,7 +1953,7 @@ To get this to run, we need to do the following:
 
 - Build the image and tag it, let's call this one: `consolehub:v1`.
   Don't forget to create a new Dockerfile in which you use the new python file, and also copy the job template!
-- This might fail, as one of the requirements won't install on alpine linux.
+- This might fail, as one of the requirements won't install on alpine Linux.
   You should change the base image from `python:alpine` to `python:3`.
 - We should update the key `image` in the Kubernetes manifest
 - Deploy this
@@ -1967,7 +1967,7 @@ $ curl http://172.17.0.2:32535/api/paul/start/ -X POST
 {"error":"(403)\nReason: Forbidden\nHTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff', 'Date': 'Mon, 25 Jan 2021 11:29:21 GMT', 'Content-Length': '366'})\nHTTP response body: {\n  \"kind\": \"Status\",\n  \"apiVersion\": \"v1\",\n  \"metadata\": {\n    \n  },\n  \"status\": \"Failure\",\n  \"message\": \"jobs.batch is forbidden: User \\\"system:serviceaccount:default:default\\\" cannot create resource \\\"jobs\\\" in API group \\\"batch\\\" in the namespace \\\"default\\\"\",\n  \"reason\": \"Forbidden\",\n  \"details\": {\n    \"group\": \"batch\",\n    \"kind\": \"jobs\"\n  },\n  \"code\": 403\n}\n"}
 ```
 
-Aargh, I missed something, again... It still doesn't work 😿! Let's check the error in a more readable form. You can requests the logs from any pod with kubectl:
+Aargh, I missed something, again... It still doesn't work 😿! Let's check the error in a more readable form. You can request the logs from any pod with kubectl:
 
 ```bash
 $ kubectl get pods
@@ -2020,7 +2020,7 @@ HTTP response body: {
 172.18.0.1 - - [25/Jan/2021 11:29:21] "POST /api/paul/start/ HTTP/1.1" 200 -
 ```
 
-We got a 403 Forbidden from the Kubernetes API. The message in the response is talking about an user which doesn't have access to "job.batch".
+We got a 403 Forbidden from the Kubernetes API. The message in the response is talking about a user which doesn't have access to "job.batch".
 
 ![](assets/images/headdesk.gif)
 
@@ -2046,7 +2046,7 @@ Traceback (most recent call last):
 kubernetes.config.config_exception.ConfigException: Service host/port is not set.
 ```
 
-Urgh, today is not a good day. Every move we get a slap on the wrist 😩. Ok, let's try again, we are not running in the cluster, so maybe we should load the config somewhere else? (To be clear, I press tab 2 times in the first row, this will give usually give me some suggestions in the python CLI)
+Urgh, today is not a good day. Every move we get a slap on the wrist 😩. Ok, let's try again, we are not running in the cluster, so maybe we should load the config somewhere else? (To be clear, I press the tab 2 times in the first row, this will give usually give me some suggestions in the python CLI)
 
 ```bash
 >>> kubernetes.config.load_
@@ -2082,7 +2082,7 @@ Success! I guess? Let's continue, and try to create a job:
 ...
 ```
 
-Success again! Let's double check:
+Success again! Let's double-check:
 
 ```bash
 $ kubectl get jobs
@@ -2090,9 +2090,9 @@ NAME              COMPLETIONS   DURATION   AGE
 webconsole-paul   0/1           80s        80s
 ```
 
-That's a lot better! We basically need a better user. So far we only used the Kubernetes API with kubectl, and minikube automatically configures kubectl to have basically superuser permissions 🦹. We need to create an user which gives us enough access to do the operations we need.
+That's a lot better! We need a better user. So far we only used the Kubernetes API with kubectl, and minikube automatically configures kubectl to have superuser permissions 🦹. We need to create a user which gives us enough access to do the operations we need.
 
-As this is just a tutorial we are not going in depth, but Kubernetes has something called "RBAC": Role-based access control. Let's YAML 💃🕺:
+As this is just a tutorial we are not going in-depth, but Kubernetes has something called "RBAC": Role-based access control. Let's YAML 💃🕺:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -2114,7 +2114,7 @@ rules:
     - list
 ```
 
-This role gives us access to two api groups at line 7 and 13: `batch` and `core` (""). In those api groups we request access to the resources we use: `jobs` (9) and `pods` (15). We also request access to certain "verbs", which are basically operations on these api's. The code needs to be able to "create" (11) jobs and "list" (17) pods. To make things a little bit more complicated we can't use roles directly, we also need a user or if you are a computer program a "service account":
+This role gives us access to two API groups on lines 7 and 13: `batch` and `core`. In these API groups, we request access to the resources we use: `jobs` (9) and `pods` (15). We also request access to certain "verbs", which are basic operations on these APIs. The code needs to be able to "create" (11) jobs and "list" (17) pods. To make things a little bit more complicated we can't use roles directly, we also need a user or if you are a computer program a "service account":
 
 ```yaml
 apiVersion: v1
@@ -2124,7 +2124,7 @@ metadata:
   namespace: default
 ```
 
-And ofcourse we also need to make clear what role(s) this service account can use:
+And of course we also need to make clear what role(s) this service account can use:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -2141,7 +2141,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-Ok, I promise this is the last wall of YAML 🧱, and it's just adding one line to the deployment yaml. To make it easier you can copy the whole YAML file below. The only change is line 20, we just added `serviceAccount: consolehub` , to make clear we want to use the Service account.
+Ok, I promise this is the last wall of YAML 🧱, and it's just adding one line to the deployment YAML. To make it easier you can copy the whole YAML file below. The only change is line 20, we just added `serviceAccount: consolehub` , to make clear we want to use the Service account.
 
 ```yaml
 apiVersion: apps/v1
@@ -2173,7 +2173,7 @@ spec:
               containerPort: 5000
 ```
 
-To finish this long wall of YAML manifests, I should actually proof we have a working application. Let's deploy all this yaml, and cleanup the manually created job.
+To finish this long wall of YAML manifests, I should prove we have a working application. Let's deploy all this YAML, and cleanup the manually created job.
 
 ```bash
 $ kubectl apply -f clusterrole.yaml -f serviceaccount.yaml \
@@ -2217,7 +2217,7 @@ We can count 🥳.
 
 We hope you enjoyed this whirlwind tour of modern DevOps just as much as we enjoyed writing it. Too many books on this subject have too much theory, require you to get on AWS etc. We have tried to make it practical and approachable.
 
-If you like this, you might be pleased to know that we are working on a book that follows in the same principles as this tutorial:
+If you like this, you might be pleased to know that we are working on a book that follows the same principles as this tutorial:
 
 > Show me or it didn't happen
 
@@ -2231,4 +2231,4 @@ In addition to the material covered in this tutorial, the book will also cover:
 * Production
 * Etc.
 
-If you are interested in the book, please let us know by putting your email in the form below and hitting "I want the book". As a thank you, everyone who subscribe will get a 50% discount on the book 🙏
+If you are interested in the book, please let us know by putting your email in the form below and hitting "I want the book". As a thank you, everyone, who subscribes will get a 50% discount on the book 🙏

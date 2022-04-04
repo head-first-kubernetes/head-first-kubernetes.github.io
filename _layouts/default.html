@@ -22,11 +22,8 @@
 			.content {
 				padding-top: 2rem;
 			}
-			.sticky {
-				position: -webkit-sticky;
-				position: sticky;
+			.sidebar {
 				top: 2rem;
-				padding-right: 3rem;
 			}
 			hr {
 				margin: 2rem 1rem 2rem 1rem;
@@ -39,8 +36,8 @@
 				padding: 1rem 3rem 2rem 3rem
 			}
 			.subscribe {
-				margin-left: 3em;
-				margin-right: 3em;
+				margin-left: 1em;
+				margin-right: 1em;
 				margin-top: 1em;
 			}
 			.form-control {
@@ -54,8 +51,8 @@
 				background-color: #687076;
 			}
 			.toc {
-				margin-left: 3em;
-				margin-right: 3em;
+				margin-left: 1em;
+				margin-right: 1em;
 			}
 		</style>
 		{% seo %}
@@ -65,7 +62,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-4">
-					<div class="sticky">
+					<div class="sidebar">
 						<img src="assets/images/header.svg" alt="Kubernetes" class="header">
 						<div class="buttons">
 							<a class="github-button" href="https://github.com/head-first-kubernetes/tutorial" data-icon="octicon-star" data-size="large" aria-label="Star head-first-kubernetes/tutorial on GitHub">Star</a>
@@ -73,16 +70,17 @@
 						</div>
 						<form action="https://tinyletter.com/head-first-kubernetes" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/head-first-kubernetes', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
 							<div class="subscribe">
-								<label>If you like this tutorial, you would ❤️ the book. Sign-up for updates & get 50% off on the book.</label>
+								<label>If you like this tutorial, you would ❤️ the book. Sign-up for updates & get 50% off.</label>
 								<input class="form-control " type="text" name="email" id="tlemail" placeholder="name@example.com" />
 								<input type="hidden" value="1" name="embed"/>
 								<input class="btn btn-secondary col-12 form-control" type="submit" value="I want the book" />
 								<a href="#next-steps"><p style="margin-top: 1em; text-align:center;">What's in the book?</p></a>
+								<p>You can get in touch with the authors <a href="https://twitter.com/alixedi">@alixedi</a> and <a href="https://twitter.com/p4vdl">@p4vdl</a>.</p>
 							</div>
 						</form>
 						<hr>
-						<div class="toc"></div>
 					</div>
+					<div class="toc sticky-md-top"></div>
 				</div>
 				<div class="col-md-8">
 					<div class="content">
